@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->graphicsView->setHidden(true);
+    ui->verticalLayout->setAlignment(Qt::AlignCenter);
 }
 
 MainWindow::~MainWindow()
@@ -26,6 +27,7 @@ void MainWindow::on_playButton_clicked()
 
 void MainWindow::on_quitButton_clicked()
 {
+    QApplication::quit();
 }
 
 void MainWindow::hide_buttons()

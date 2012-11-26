@@ -24,6 +24,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    void hide_buttons();
 };
 
 #endif // MAINWINDOW_H

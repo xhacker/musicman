@@ -25,7 +25,10 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0">
+      <item>
+       <widget class="QGraphicsView" name="graphicsView"/>
+      </item>
       <item>
        <widget class="QPushButton" name="playButton">
         <property name="sizePolicy">

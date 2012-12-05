@@ -9,6 +9,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/musicman/main.qml"));
     viewer.showExpanded();
+    viewer.setMinimumSize(QSize(640, 480));
 
     return app->exec();
 }

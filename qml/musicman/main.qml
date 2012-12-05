@@ -16,8 +16,17 @@ Rectangle {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
 
+        signal start()
+        onStart: text_start.text = "Start Fired"
+
         focus: true
         KeyNavigation.down: rect_tutorial; KeyNavigation.up: rect_exit
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                event.accepted = true
+                start()
+            }
+        }
 
         Text {
             id: text_start
@@ -34,6 +43,7 @@ Rectangle {
         MouseArea {
             id: mouse_area_start
             anchors.fill: parent
+            onClicked: parent.start()
         }
     }
 
@@ -48,7 +58,16 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 0
 
+        signal tutorial()
+        onTutorial: text_tutorial.text = "Tutorial Fired"
+
         KeyNavigation.down: rect_exit; KeyNavigation.up: rect_start
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                event.accepted = true
+                tutorial()
+            }
+        }
 
         Text {
             id: text_tutorial
@@ -65,6 +84,7 @@ Rectangle {
         MouseArea {
             id: mouse_area_tutorial
             anchors.fill: parent
+            onClicked: parent.tutorial()
         }
     }
 
@@ -79,7 +99,16 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 0
 
+        signal exit()
+        onExit: Qt.quit()
+
         KeyNavigation.down: rect_start; KeyNavigation.up: rect_tutorial
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                event.accepted = true
+                exit()
+            }
+        }
 
         Text {
             id: text_exit
@@ -96,7 +125,7 @@ Rectangle {
         MouseArea {
             id: mouse_area_exit
             anchors.fill: parent
-            onClicked: Qt.quit()
+            onClicked: parent.exit()
         }
     }
     states: [

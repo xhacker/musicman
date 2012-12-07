@@ -128,4 +128,9 @@ Rectangle {
             onClicked: parent.exit()
         }
     }
+    states: [
+        State {
+            name: "State1"
+        }
+    ]
 }

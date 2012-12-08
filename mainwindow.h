@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "canvas.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    Canvas *canvas;
     void hide_buttons();
 };
 

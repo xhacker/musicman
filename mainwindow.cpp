@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "canvas.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->graphicsView->setHidden(true);
     ui->verticalLayout->setAlignment(Qt::AlignCenter);
 }
 
@@ -22,7 +22,9 @@ void MainWindow::on_tutorialButton_clicked()
 void MainWindow::on_playButton_clicked()
 {
     hide_buttons();
-    ui->graphicsView->setHidden(false);
+    canvas = new Canvas(this);
+    canvas->resize(this->size());
+    canvas->show();
 }
 
 void MainWindow::on_quitButton_clicked()

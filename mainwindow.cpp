@@ -21,8 +21,8 @@ void MainWindow::on_tutorialButton_clicked()
 
 void MainWindow::on_playButton_clicked()
 {
-    ui->graphicsView->setHidden(false);
     hide_buttons();
+    ui->graphicsView->setHidden(false);
 }
 
 void MainWindow::on_quitButton_clicked()

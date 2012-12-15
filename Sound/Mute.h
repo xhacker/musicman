@@ -11,6 +11,8 @@ Header file for Mute.cpp
 
 using namespace std;
 
-void Pause(wstring MIDIFile);
+void Stop(wstring MusicFile);
+
+void Pause(wstring MusicFile);
 
 #endif MUTE_H_

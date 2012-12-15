@@ -13,6 +13,8 @@ Header file for Play.cpp
 
 using namespace std;
 
-void Play(wstring MIDIFile);
+void Play(wstring MusicFile);
+
+void Resume(wstring MusicFile);
 
 #endif PLAY_H_

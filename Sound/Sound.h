@@ -16,6 +16,6 @@ Header file for Sound.cpp
 
 using namespace std;
 
-int Sound(wstring MIDIFile, int argc, char** argv);
+int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv);
 
 #endif SOUND_H_

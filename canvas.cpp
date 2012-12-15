@@ -1,5 +1,13 @@
 #include <QPainter>
 #include "canvas.h"
+const int Heavy = -150;
+const int Medium = -75;
+const int MediumLight = 0;
+const int Light = 75;
+const int ExtraLight = 150;
+
+const int window_height = 480;
+const int window_width = 640;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent)
 {
@@ -8,39 +16,34 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent)
 void Canvas::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
-    QPainter qp(this);
-    drawLines(&qp);
+    QPainter painter(this);
+    painter.setWindow(-window_width/2, -window_height/2, window_width, window_height);
+    drawStrings(&painter);
 }
 
-void Canvas::drawLines(QPainter *qp)
+void Canvas::drawStrings(QPainter *painter)
 {
-    QPen pen(Qt::black, 2, Qt::SolidLine);
-    qp->setPen(pen);
-    qp->drawLine(20, 40, 250, 40);
+    QPen pen(Qt::green, 9, Qt::SolidLine);
+    painter->setPen(pen);
+    painter->drawLine(Heavy, -window_height/2, Heavy, window_height/2);
 
-    pen.setStyle(Qt::DashLine);
-    qp->setPen(pen);
-    qp->drawLine(20, 80, 250, 80);
+    pen.setColor(Qt::red);
+    pen.setWidth(8);
+    painter->setPen(pen);
+    painter->drawLine(Medium, -window_height/2, Medium, window_height/2);
 
-    pen.setStyle(Qt::DashDotLine);
-    qp->setPen(pen);
-    qp->drawLine(20, 120, 250, 120);
+    pen.setColor(Qt::yellow);
+    pen.setWidth(7);
+    painter->setPen(pen);
+    painter->drawLine(MediumLight, -window_height/2, MediumLight, window_height/2);
 
-    pen.setStyle(Qt::DotLine);
-    qp->setPen(pen);
-    qp->drawLine(20, 160, 250, 160);
+    pen.setColor(Qt::blue);
+    pen.setWidth(6);
+    painter->setPen(pen);
+    painter->drawLine(Light, -window_height/2, Light, window_height/2);
 
-    pen.setStyle(Qt::DashDotDotLine);
-    qp->setPen(pen);
-    qp->drawLine(20, 200, 250, 200);
-
-    QVector<qreal> dashes;
-    qreal space = 4;
-
-    dashes << 1 << space << 5 << space;
-
-    pen.setStyle(Qt::CustomDashLine);
-    pen.setDashPattern(dashes);
-    qp->setPen(pen);
-    qp->drawLine(20, 240, 250, 240);
+    pen.setColor(Qt::magenta);
+    pen.setWidth(5);
+    painter->setPen(pen);
+    painter->drawLine(ExtraLight, -window_height/2, ExtraLight, window_height/2);
 }

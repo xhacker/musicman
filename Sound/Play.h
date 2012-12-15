@@ -17,4 +17,8 @@ void Play(wstring MusicFile);
 
 void Resume(wstring MusicFile);
 
+void VolumeSet(wstring MusicFile);
+
+void Volume(wstring MusicFile, int vlevel);
+
 #endif PLAY_H_

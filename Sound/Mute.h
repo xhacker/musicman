@@ -15,4 +15,7 @@ void Stop(wstring MusicFile);
 
 void Pause(wstring MusicFile);
 
+void Mute();
+void UnMute();
+
 #endif MUTE_H_

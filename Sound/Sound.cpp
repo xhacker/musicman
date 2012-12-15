@@ -15,6 +15,7 @@ NOTE:
 1. Can play mp3 and MIDI at the same time, but MIDI is very quiet, can barely hear it if mp3 is a loud song
 2. Can play two mp3 files at the same time, individual controls based on the files name.
 3. There is no volume control, but both songs can be heard clearly.
+4. mciSendString DOES NOT LIKE SPACES. using them without quotes will cause the program to CRASH
 */
 
 #pragma comment( lib, "winmm" )//library
@@ -40,6 +41,15 @@ void Stop(wstring MusicFile);
 void Pause(wstring MusicFile);
 void Resume(wstring MusicFile);
 
+//Volume Control in Play.cpp
+void VolumeSet(wstring MusicFile, wstring MusicFile2);//set so that volume may be changed independently 
+void Volume(wstring MusicFile, int vlevel);//choose volume level (goes to 1000)
+
+//Mute the music file
+void Mute();
+void UnMute();
+
+
 int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
 	//two different MusicFiles may be called to play two different songs.
 
@@ -51,6 +61,10 @@ int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
     int Flag;          
     HMIDIOUT Device; 
 	char PlayMusic;
+	
+	//volume control
+	int vlevel;
+	bool volumechange=0;
 
 	PlayMusic=_getch();
 
@@ -58,10 +72,11 @@ int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
 	//How to call mp3 files:
 	//loop for Playing specified music file
 	while(PlayMusic!='q'){
+
 		if(PlayMusic=='p')//play
 			Play(MusicFile);
 
-		else if(PlayMusic=='q')//stop Playing song
+		else if(PlayMusic=='n')//stop Playing song
 			Stop(MusicFile);
 
 		else if(PlayMusic=='s'){//pause the song
@@ -71,6 +86,12 @@ int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
 		else if(PlayMusic=='r'&&Playing==1){
 			Resume(MusicFile);
 			Playing=0;//no longer paused
+		}
+		else if(PlayMusic=='m'){
+			Mute();
+		}
+		else if(PlayMusic=='u'){
+			UnMute();
 		}
 
 		//Controls for the second song
@@ -89,7 +110,26 @@ int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
 			SecondFile=0;
 		}
 
+		else if(PlayMusic=='c'){//Music File 1 volume control
+			VolumeSet(MusicFile, MusicFile2);
+			volumechange = 1;
+		}
 
+
+		else if(PlayMusic=='v'&&volumechange==1){//Music File 1 volume control
+			cout<<"Please enter the volume level you would like to use: From 0 to 5"<<endl;
+			cin>>vlevel;//vlevel must be changed to wstring
+			cout<<endl;
+			Volume(MusicFile, vlevel);
+		}
+
+		else if(PlayMusic=='6'&&volumechange==1){//Music File 2 volume Control
+			cout<<"Please enter the volume level you would like to use: From 0 to 5"<<endl;
+			vlevel=_getch();
+			cout<<endl;
+			Volume(MusicFile, vlevel);
+			
+		}
 
 		PlayMusic=_getch();
 	}
@@ -138,7 +178,7 @@ int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
 		if (_kbhit()) { 
 			Playing = _getch();
 			if (Playing=='p') {
-				message.data[2] = 60;
+				message.data[2] = 100;
 				cout<<"On"<<endl;
 				Flag = midiOutShortMsg(Device, message.word);
 			} 

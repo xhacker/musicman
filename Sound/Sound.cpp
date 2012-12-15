@@ -1,4 +1,23 @@
-#pragma comment( lib, "winmm" )
+/*
+//Function for calling Play and Pause functions
+//Play function: plays midi file
+//Pause function: stops file
+
+//Sound takes in wstring MusicFile. wstring must contain address of MIDI File to be played.
+//Sound file will play individual note on queue if no file is specified.
+
+//Example:
+
+//wstring MusicFile = L"C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mid";
+//cout<<Sound(MusicFile,argc,argv);
+
+NOTE:
+1. Can play mp3 and MIDI at the same time, but MIDI is very quiet, can barely hear it if mp3 is a loud song
+2. Can play two mp3 files at the same time, individual controls based on the files name.
+3. There is no volume control, but both songs can be heard clearly.
+*/
+
+#pragma comment( lib, "winmm" )//library
 
 #include <iostream>
 #include <Windows.h>
@@ -13,85 +32,168 @@
 
 using namespace std;
 
-void Play(wchar_t* MIDIFile);
+//Start and stop playing a music file
+void Play(wstring MusicFile);
+void Stop(wstring MusicFile);
 
-int Sound(string MIDIFile, int argc, char** argv){
+//Pause and resume file from pause point
+void Pause(wstring MusicFile);
+void Resume(wstring MusicFile);
 
-    int playing;     
+int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv){
+	//two different MusicFiles may be called to play two different songs.
+
+	//variables for midiOutOpen & midiOutShortMsg
+	//TODO: add midiOutLongMsg
+    int Playing=0; 
+	int SecondFile=0;
     int MIDINote;      
-    int flag;          
-    HMIDIOUT device;    
-	
-	//const basic_string <wchar_t> s1 ( MIDIFile);
-	//wstring s2 ( L"open "+  s1 + L" type mpegvieo alias MediaFile"); 
-	
+    int Flag;          
+    HMIDIOUT Device; 
+	char PlayMusic;
 
-	/*string s1 ("open " + MIDIFile + " type mpegvideo alias MediaFile"));
-	const wchar_t* s2 (s1.c_str());*/
+	PlayMusic=_getch();
 
-	wchar_t* MIDIopen=L"open C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mid type mpegvideo alias MediaFile";
+
+	//How to call mp3 files:
+	//loop for Playing specified music file
+	while(PlayMusic!='q'){
+		if(PlayMusic=='p')//play
+			Play(MusicFile);
+
+		else if(PlayMusic=='q')//stop Playing song
+			Stop(MusicFile);
+
+		else if(PlayMusic=='s'){//pause the song
+			Pause(MusicFile);
+			Playing=1;//pause flag triggered
+		}
+		else if(PlayMusic=='r'&&Playing==1){
+			Resume(MusicFile);
+			Playing=0;//no longer paused
+		}
+
+		//Controls for the second song
+		else if(PlayMusic=='2'){//Play a second mp3 file
+			Play(MusicFile2);
+		}
+		else if(PlayMusic=='3'){//Play a second mp3 file
+			Stop(MusicFile2);
+		}
+		else if(PlayMusic=='4'){//Play a second mp3 file
+			Pause(MusicFile2);
+			SecondFile=1;
+		}
+		else if(PlayMusic=='5'&&SecondFile==1){//Play a second mp3 file
+			Resume(MusicFile2);
+			SecondFile=0;
+		}
+
+
+
+		PlayMusic=_getch();
+	}
+ 
+	//default
+
+	/*wchar_t* MIDIopen=L"open C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mid type mpegvideo alias MediaFile";
     wchar_t* MIDIplay=L"play MediaFile";
     mciSendString(MIDIopen, NULL, 0, NULL);
-    mciSendString(MIDIplay,NULL, 0, NULL); 
-
-	//mciSendString(L"play C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mid",NULL,0,NULL);
-
-	string path = "play C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mid";
-
-	//midiOutOpen(&device, C:\Users\Simone\Downloads\EspanjaPrelude.mid,0,0,CALLBACK_NULL);
-
-	//const char *c=path.c_str();
-	//mciSendString(c,NULL,0,NULL);
+    mciSendString(MIDIplay,NULL, 0, NULL);*/ 
 
 
+	//Example of how to play MIDI files while mp3 is playing:
 
+	//if a midi file is playing in the loop instead of an mp3, it must be closed for the following to function
+	union { 
+		unsigned long word; 
+		unsigned char data[4]; 
+	} message;
 
-
-	union { unsigned long word; unsigned char data[4]; } 
-	message;
+	//declare note value, volume, length, and empty  (88 possible)
 	message.data[0] = 0x90;  
 	message.data[1] = 60;   
 	message.data[2] = 100;  
 	message.data[3] = 0;   
 		
-
-	if (argc < 2) {
+	//input value from system (taken from main)
+	//if main has no such value to offer, will not work
+	if (argc < 2){
 		MIDINote = 0;
-	} else {
+		} 
+
+	else {
 		MIDINote = atoi(argv[1]);//converts string into integer
-	}
-	flag = midiOutOpen(&device, MIDINote, 0, 0, CALLBACK_NULL);
-	if (flag != MMSYSERR_NOERROR) {
-		printf("MIDI did not open.\n");
+		}
+
+	//open note file
+	Flag = midiOutOpen(&Device, MIDINote, 0, 0, CALLBACK_NULL);
+	if (Flag != MMSYSERR_NOERROR) {
+		printf("MIDI did not open.\n");//If a different MIDI file is playing that cannot be closed
 	}
 
-	printf("Press \"q\" to quit.\n");
+	PlayMusic=' ';
+	printf("q will exit the loop.\n");
 	while (1) {        
 		if (_kbhit()) { 
-			playing = _getch();
-			if (playing=='p') {
+			Playing = _getch();
+			if (Playing=='p') {
 				message.data[2] = 60;
-				printf("ON.\n");
-				flag = midiOutShortMsg(device, message.word);
+				cout<<"On"<<endl;
+				Flag = midiOutShortMsg(Device, message.word);
 			} 
-			else if(playing=='s') {
+			else if(Playing=='s') {
 				message.data[2] = 0; 
-				printf("OFF.\n");
-				flag = midiOutShortMsg(device, message.word);
+				cout<<"Off"<<endl;
+				Flag = midiOutShortMsg(Device, message.word);
 			}
-			else{}
+			else{}//base case... todo
 
 
-			if (flag != MMSYSERR_NOERROR) {
+			if (Flag != MMSYSERR_NOERROR) {
 				printf("No sound file.");
 			}
-			if (playing == 'q') break;
+			if (Playing == 'q') 
+				break;
 		}
 	}
-
   
-	midiOutReset(device);
-	midiOutClose(device);
-
+	midiOutReset(Device);
+	midiOutClose(Device);//must close file after completion
 	return 0;
 }
+
+
+/*
+Note:
+
+Main.cpp used for testing
+
+#include <iostream>
+#include <Windows.h>
+#include <MMSystem.h>
+#include <string>
+#include <conio.h>
+
+#include "Sound.h"
+#include "Play.h"
+#include "Mute.h"
+
+
+using namespace std;
+
+int Sound(wstring MusicFile, wstring MusicFile2, int argc, char** argv);
+
+int main(int argc, char** argv) {
+   
+	wstring MusicFile = L"C:\\Users\\Simone\\Music\\Downloads\\mulan.mp3";
+	wstring MusicFile2 = L"C:\\Users\\Simone\\Music\\Downloads\\moon.mp3";
+
+	cout<<Sound(MusicFile, MusicFile2, argc, argv);
+
+
+	_getch();
+	return 0;
+}
+
+*/

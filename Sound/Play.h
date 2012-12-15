@@ -1,3 +1,7 @@
+/*
+Header file for Play.cpp
+*/
+
 #define PLAY_H_
 #ifndef PLAY_H_
 
@@ -9,6 +13,8 @@
 
 using namespace std;
 
-void Play(wchar_t* MIDIFile);
+void Play(wstring MusicFile);
+
+void Resume(wstring MusicFile);
 
 #endif PLAY_H_

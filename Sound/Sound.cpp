@@ -9,7 +9,15 @@
 //Example:
 
 //wstring MidiFile = L"C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mid";
-//cout<<Sound(MidiFile,argc,argv);
+//cout<<Sound(MidiFile,argc,argv);\
+
+Or, to play mp3 files:
+
+Input should be:
+
+
+wstring MidiFile = L"C:\\Users\\Simone\\Downloads\\EspanjaPrelude.mp3";
+Sound(MidiFile,argc,argv);
 
 TODO:
 Play two MIDI files at same time still doesn't work

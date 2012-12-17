@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "canvas.h"
 #include <Phonon>
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,18 +28,17 @@ void MainWindow::on_playButton_clicked()
     canvas->resize(this->size());
     canvas->show();
 
-    Phonon::MediaObject *music_guitar = Phonon::createPlayer(Phonon::MusicCategory,
+    music_guitar = Phonon::createPlayer(Phonon::MusicCategory,
       Phonon::MediaSource("/Users/xhacker/Dropbox/Project/musicman-build-Desktop-Debug/Feelings/guitar.mp3"));
     music_guitar->play();
 
-    Phonon::MediaObject *music_song = new Phonon::MediaObject(this);
+    music_song = new Phonon::MediaObject(this);
     music_song->setCurrentSource(Phonon::MediaSource("/Users/xhacker/Dropbox/Project/musicman-build-Desktop-Debug/Feelings/song.mp3"));
-    Phonon::AudioOutput *music_song_output =
+    music_song_output =
         new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::Path path = Phonon::createPath(music_song, music_song_output);
     music_song->play();
     music_song_output->setMuted(true);
-    music_song_output->setMuted(false);
 }
 
 void MainWindow::on_quitButton_clicked()
@@ -55,6 +55,16 @@ void MainWindow::hide_buttons()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-//   if (event->key() == Qt::Key_1) {
-//   }
+   if (event->key() == Qt::Key_1)
+   {
+       music_song_output->setMuted(false);
+   }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+   if (event->key() == Qt::Key_1)
+   {
+       music_song_output->setMuted(true);
+   }
 }

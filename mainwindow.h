@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QWidget>
+#include <Phonon>
 #include "canvas.h"
 
 namespace Ui {
@@ -28,7 +29,12 @@ private:
     Ui::MainWindow *ui;
     Canvas *canvas;
     void hide_buttons();
+
     void keyPressEvent(QKeyEvent *e);
+    void keyReleaseEvent(QKeyEvent *e);
+    Phonon::MediaObject *music_guitar;
+    Phonon::MediaObject *music_song;
+    Phonon::AudioOutput *music_song_output;
 };
 
 #endif // MAINWINDOW_H

@@ -1,5 +1,10 @@
 #include "midi.h"
-#include “note.h”
+#include "note.h"
+#include "jdksmidi/world.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
+#include "jdksmidi/parser.h"
 
 Midi::Midi(std::string address)
 {
@@ -17,13 +22,35 @@ Midi::Midi(std::string address)
 
         if ( p.Parse ( ( uchar ) c, &m ) )
         {
-            parse（）；
+            parse();
         }
     }
-    system("pause");
     return 0;
 }
 
-Midi：：parse{
+Midi::parse()
+{
+      int l = ex->GetLength();
 
-      }
+        if ( normal_sysex )
+        {
+            fprintf ( f, "Normal System-Exclusive message Len=%d", l );
+        }
+        else
+        {
+            fprintf ( f, "Authorization System-Exclusive message Len=%d", l );
+        }
+
+        for ( int i = 0; i < l; ++i )
+        {
+            if ( ( ( i ) % 20 ) == 0 )
+            {
+                fprintf ( f, "\n" );
+            }
+
+            fprintf ( f, "%02x ", ( int ) ex->GetData ( i ) );
+        }
+
+        fprintf ( f, "\n" );
+        fflush ( f );
+}

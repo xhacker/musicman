@@ -25,7 +25,7 @@ Midi::Midi(std::string address)
             parse();
         }
     }
-    return 0;
+return 0;
 }
 
 Midi::parse()
@@ -45,9 +45,9 @@ Midi::parse()
         {
             if ( ( ( i ) % 20 ) == 0 )
             {
-                fprintf ( f, "\n" );
             }
-
+            fprintf ( f, "\n" );
+            //文件头最后四位显示时间，第17 18位记录调号
             fprintf ( f, "%02x ", ( int ) ex->GetData ( i ) );
         }
 

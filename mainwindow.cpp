@@ -55,7 +55,6 @@ void MainWindow::hide_buttons()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-   if (event->key() == Qt::Key_1) {
-
-   }
+//   if (event->key() == Qt::Key_1) {
+//   }
 }

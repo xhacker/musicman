@@ -1,5 +1,5 @@
 #include "midi.h"
 
-Midi::Midi()
+Midi::Midi(std::string address)
 {
 }

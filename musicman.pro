@@ -17,7 +17,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     canvas.cpp \
     note.cpp \
-    button.cpp \
     jdksmidi/jdksmidi_advancedsequencer.cpp \
     jdksmidi/jdksmidi_driver.cpp \
     jdksmidi/jdksmidi_driverdump.cpp \
@@ -51,7 +50,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     canvas.h \
     note.h \
-    button.h \
     jdksmidi/advancedsequencer.h \
     jdksmidi/driver.h \
     jdksmidi/driverdump.h \

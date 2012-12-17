@@ -27,6 +27,7 @@ private:
     Ui::MainWindow *ui;
     Canvas *canvas;
     void hide_buttons();
+    void keyPressEvent(QKeyEvent *e);
 };
 
 #endif // MAINWINDOW_H

@@ -42,8 +42,8 @@ void MainWindow::on_playButton_clicked()
     music_song_output->setMuted(true);
 
     QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), canvas, SLOT(repaint()));
-    timer->start(50);
+    connect(timer, SIGNAL(timeout()), canvas, SLOT(animate()));
+    timer->start(25);
 }
 
 void MainWindow::on_quitButton_clicked()

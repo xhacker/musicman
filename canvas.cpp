@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QTimer>
 #include "canvas.h"
 
 const int string_positions[6] = {0, -150, -75, 0, 75, 150};
@@ -9,6 +10,7 @@ const int window_width = 640;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent)
 {
+    elapsed = 0;
     for (int i = 1; i <= 5; ++i)
     {
         isPressing[i] = false;
@@ -20,8 +22,10 @@ void Canvas::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter(this);
     painter.setWindow(-window_width/2, -window_height/2, window_width, window_height);
+    painter.setRenderHint(QPainter::Antialiasing);
     drawStrings(&painter);
     drawButtons(&painter);
+    drawBars(&painter);
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -38,7 +42,6 @@ void Canvas::drawStrings(QPainter *painter)
 
 void Canvas::drawButtons(QPainter *painter)
 {
-    painter->setRenderHint(QPainter::Antialiasing);
     QPen pen(Qt::black, 10, Qt::SolidLine, Qt::RoundCap);
     QBrush brush(Qt::black, Qt::SolidPattern);
 
@@ -59,10 +62,28 @@ void Canvas::drawButtons(QPainter *painter)
     }
 }
 
+void Canvas::drawBars(QPainter *painter)
+{
+    QPen pen(Qt::white, 40, Qt::SolidLine, Qt::RoundCap);
+    painter->setPen(pen);
+    for (int i = 1; i <= 5; ++i)
+    {
+        painter->drawLine(string_positions[i], -window_height/2 + elapsed / 10 - 100 * i,
+                string_positions[i], -window_height/2 + elapsed / 10 + 100 - 100 * i);
+    }
+}
+
+
 void Canvas::setPressing(int which, bool pressing)
 {
     if (which >= 1 && which <= 5)
     {
         isPressing[which] = pressing;
     }
+}
+
+void Canvas::animate()
+{
+    elapsed = (elapsed + qobject_cast<QTimer*>(sender())->interval());
+    repaint();
 }

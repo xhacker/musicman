@@ -15,13 +15,11 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     canvas.cpp \
-    ../note.cpp \
     note.cpp \
     button.cpp
 
 HEADERS  += mainwindow.h \
     canvas.h \
-    ../note.h \
     note.h \
     button.h
 

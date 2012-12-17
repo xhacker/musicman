@@ -2,6 +2,8 @@
 #define CANVAS_H
 
 #include <QWidget>
+#include "note.h"
+#include "button.h"
 
 class Canvas : public QWidget
 {

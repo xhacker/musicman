@@ -8,11 +8,7 @@ class Button : public QWidget
     Q_OBJECT
 public:
     explicit Button(QWidget *parent = 0);
-    
-signals:
-    
-public slots:
-    
+protected:
 };
 
 #endif // BUTTON_H

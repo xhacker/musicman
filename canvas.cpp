@@ -13,12 +13,13 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent)
 {
 }
 
-void Canvas::paintEvent(QPaintEvent *e)
+void Canvas::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(e);
+    Q_UNUSED(event);
     QPainter painter(this);
     painter.setWindow(-window_width/2, -window_height/2, window_width, window_height);
     drawStrings(&painter);
+    drawButtons(&painter);
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -46,4 +47,31 @@ void Canvas::drawStrings(QPainter *painter)
     pen.setWidth(5);
     painter->setPen(pen);
     painter->drawLine(ExtraLight, -window_height/2, ExtraLight, window_height/2);
+}
+
+void drawButtons(QPainter *painter)
+{
+    painter->setRenderHint(QPainter::Antialiasing);
+    QPen pen(Qt::black, 10, Qt::SolidLine, Qt::RoundCap);
+    QBrush brush(Qt::green, Qt::SolidPattern);
+    painter->setPen(pen);
+    painter->setBrush(brush);
+    painter->drawEllipse(Heavy, window_height-100, 50, 50);
+
+    brush.setColor(Qt::red);
+    painter->setBrush(brush);
+    painter->drawEllipse(Medium, window_height-100, 50, 50);
+
+    brush.setColor(Qt::yellow);
+    painter->setBrush(brush);
+    painter->drawEllipse(MediumLight, window_height-100, 50, 50);
+
+    brush.setColor(Qt::blue);
+    painter->setBrush(brush);
+    painter->drawEllipse(Light, window_height-100, 50, 50);
+
+    brush.setColor(Qt::magenta);
+    painter->setBrush(brush);
+    painter->drawEllipse(ExtraLight, window_height-100, 50, 50);
+
 }

@@ -13,10 +13,7 @@ public:
 protected:
     void paintEvent(QPaintEvent *event);
     void drawStrings(QPainter *qp);
-    void drawNote(QPainter *qp, Note&);
-    void drawNotePressed(QPainter *qp, Note&);
-    void drawButton(QPainter *qp, Button&);
-    void drawButtonPressed(QPainter *qp, Button&);
+    void drawButtons(QPainter *qp);
 };
 
 #endif // CANVAS_H

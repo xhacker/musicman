@@ -44,7 +44,8 @@ SOURCES += main.cpp\
     jdksmidi/jdksmidi_tempo.cpp \
     jdksmidi/jdksmidi_tick.cpp \
     jdksmidi/jdksmidi_track.cpp \
-    jdksmidi/jdksmidi_utils.cpp
+    jdksmidi/jdksmidi_utils.cpp \
+    midi.cpp
 
 HEADERS  += mainwindow.h \
     canvas.h \
@@ -80,6 +81,7 @@ HEADERS  += mainwindow.h \
     jdksmidi/jdksmidi/tick.h \
     jdksmidi/jdksmidi/track.h \
     jdksmidi/jdksmidi/utils.h \
-    jdksmidi/jdksmidi/world.h
+    jdksmidi/jdksmidi/world.h \
+    midi.h
 
 FORMS    += mainwindow.ui

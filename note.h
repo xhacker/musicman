@@ -12,7 +12,12 @@ public:
 signals:
     
 public slots:
-    
+
+
+private:
+    int start;
+    int end;
+    int high;
 };
 
 #endif // NOTE_H

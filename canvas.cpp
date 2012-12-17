@@ -1,5 +1,6 @@
 #include <QPainter>
 #include "canvas.h"
+
 const int Heavy = -150;
 const int Medium = -75;
 const int MediumLight = 0;
@@ -11,6 +12,10 @@ const int window_width = 640;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent)
 {
+    for (int i = 1; i <= 5; ++i)
+    {
+        isPressing[i] = false;
+    }
 }
 
 void Canvas::paintEvent(QPaintEvent *event)
@@ -49,29 +54,34 @@ void Canvas::drawStrings(QPainter *painter)
     painter->drawLine(ExtraLight, -window_height/2, ExtraLight, window_height/2);
 }
 
-void drawButtons(QPainter *painter)
+void Canvas::drawButtons(QPainter *painter)
 {
     painter->setRenderHint(QPainter::Antialiasing);
     QPen pen(Qt::black, 10, Qt::SolidLine, Qt::RoundCap);
     QBrush brush(Qt::green, Qt::SolidPattern);
-    painter->setPen(pen);
-    painter->setBrush(brush);
-    painter->drawEllipse(Heavy, window_height-100, 50, 50);
 
-    brush.setColor(Qt::red);
-    painter->setBrush(brush);
-    painter->drawEllipse(Medium, window_height-100, 50, 50);
+    int colors[6] = {0, Qt::green, Qt::red, Qt::yellow, Qt::blue, Qt::magenta};
+    for (int i = 1; i <= 5; ++i)
+    {
+        if (isPressing[i])
+        {
+            pen.setColor(Qt::gray);
+        }
+        else
+        {
+            pen.setColor(Qt::white);
+        }
+        brush.setColor(colors[i]);
+        painter->setPen(pen);
+        painter->setBrush(brush);
+        painter->drawEllipse(-250 + 75 * i, window_height/2-100, 50, 50);
+    }
+}
 
-    brush.setColor(Qt::yellow);
-    painter->setBrush(brush);
-    painter->drawEllipse(MediumLight, window_height-100, 50, 50);
-
-    brush.setColor(Qt::blue);
-    painter->setBrush(brush);
-    painter->drawEllipse(Light, window_height-100, 50, 50);
-
-    brush.setColor(Qt::magenta);
-    painter->setBrush(brush);
-    painter->drawEllipse(ExtraLight, window_height-100, 50, 50);
-
+void Canvas::setPressing(int which, bool pressing)
+{
+    if (which >= 1 && which <= 5)
+    {
+        isPressing[which] = pressing;
+    }
 }

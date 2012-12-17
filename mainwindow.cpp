@@ -3,6 +3,7 @@
 #include "canvas.h"
 #include <Phonon>
 #include <QKeyEvent>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -39,6 +40,10 @@ void MainWindow::on_playButton_clicked()
     Phonon::Path path = Phonon::createPath(music_song, music_song_output);
     music_song->play();
     music_song_output->setMuted(true);
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), canvas, SLOT(repaint()));
+    timer->start(50);
 }
 
 void MainWindow::on_quitButton_clicked()

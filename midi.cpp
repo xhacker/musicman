@@ -1,56 +1,106 @@
-//#include "midi.h"
-//#include "note.h"
-//#include "jdksmidi/world.h"
-//#include "jdksmidi/midi.h"
-//#include "jdksmidi/msg.h"
-//#include "jdksmidi/sysex.h"
-//#include "jdksmidi/parser.h"
+#include "midi.h"
+#include "note.h"
+#include "jdksmidi/world.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
+#include "jdksmidi/parser.h"
 
-//Midi::Midi(std::string address)
-//{
-//    fprintf ( stdout, "mdparse:\n" );
-//    MIDIParser p ( 32 * 1024 );
-//    MIDIMessage m;
-//    FILE *f = fopen("D:\\jeffsong.mid", "r");
+using namespace jdksmidi;
 
-//    while ( !feof ( f ) )
+Midi::Midi(std::string address) : address(address)
+{
+}
+
+Note[6][200] Midi::parse()
+{
+    Note notes[6][200] = {
+        {{1, 0, 45},
+         {1, 144, 237},
+         {1, 336, 429},
+         {1, 528, 621},
+         {1, 720, 765},
+         {1, 1536, 1581},
+         {1, 1680, 1773},
+         {1, 2256, 2301},
+         {1, 3072, 3117},
+         {1, 3216, 3309},
+         {1, 3408, 3501},
+         {1, 3600, 3693},
+         {1, 3792, 3837},
+         {1, 4608, 4653},
+         {1, 4752, 4845},
+         {1, 5328, 5373},
+         {1, 6144, 6189},
+         {1, 6288, 6381},
+         {1, 6480, 6573},
+         {1, 6768, 6909},
+         {1, 7296, 7389},
+         {1, 7680, 7773},
+         {1, 8256, 8349},
+         {1, 9024, 9117},
+         {1, 9792, 9885},
+         {1, 10368, 10461},
+         {1, 10752, 10845},
+         {1, 11328, 11421},
+         {1, 12096, 12189},
+         {1, 12288, 12381},
+         {1, 14832, 14925},
+         {1, 16800, 16845},
+         {1, 16896, 17133},
+         {1, 17568, 17613},
+         {1, 17664, 17925},
+         {1, 17928, 17997},
+         {1, 20352, 20445},
+         {1, 20736, 20829},
+         {1, 21312, 21405},
+         {1, 22080, 22173},
+         {1, 22848, 22941},
+         {1, 23424, 23517},
+         {1, 23808, 23901},
+         {1, 24384, 24477},
+         {1, 25152, 25245},
+         {1, 25344, 25437},
+         {1, 29088, 29181},
+         {1, 29568, 29661},
+         {1, 30624, 30717},
+         {1, 31392, 31485},
+         {1, 32256, 32397},
+         {1, 32400, 32445},
+         {1, 32448, 32589},
+         {1, 32928, 33021},
+         {1, 34560, 34701},
+         {1, 34992, 35085},
+         {1, 36864, 36957},
+         {1, 38928, 38973},
+         {1, 40320, 40413},
+         {1, 40896, 40989}},
+        {},
+        {},
+        {},
+        {},
+        {}
+    };
+    return notes;
+}
+//    FILE *out = fopen("parse.out", "w");
+//    MIDIParser p(32 * 1024);
+//    MIDITimedBigMessage m;
+//    FILE *f = fopen(address.c_str(), "r");
+
+//    while (!feof(f))
 //    {
-//        int c = fgetc ( f );
+//        int c = fgetc(f);
 
-//        if ( c == EOF )
+//        if (c == EOF)
 //            break;
 
-//        if ( p.Parse ( ( uchar ) c, &m ) )
+//        if (p.Parse((uchar)c, &m))
 //        {
-//            parse();
+//            // 84-88
+////            if (m.IsNote() && m.GetNote() <= 88)
+//            {
+//                fprintf(out, "%d\t%s\t%d\n", m.GetTime(), m.IsNoteOn() ? "On" : "Off", m.GetNote() - 83);
+//            }
 //        }
 //    }
-//return 0;
-//}
-
-//Midi::parse()
-//{
-//      int l = ex->GetLength();
-
-//        if ( normal_sysex )
-//        {
-//            fprintf ( f, "Normal System-Exclusive message Len=%d", l );
-//        }
-//        else
-//        {
-//            fprintf ( f, "Authorization System-Exclusive message Len=%d", l );
-//        }
-
-//        for ( int i = 0; i < l; ++i )
-//        {
-//            if ( ( ( i ) % 20 ) == 0 )
-//            {
-//            }
-//            fprintf ( f, "\n" );
-//            //文件头最后四位显示时间，第17 18位记录调号
-//            fprintf ( f, "%02x ", ( int ) ex->GetData ( i ) );
-//        }
-
-//        fprintf ( f, "\n" );
-//        fflush ( f );
-//}

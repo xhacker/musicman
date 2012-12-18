@@ -22,8 +22,8 @@ private:
     int combo;
     int combo_start;
     bool in_combo;
-    int now_note[6];
-    Note **notes;
+    int current_note;
+//    Note **notes;
 
 protected:
     void paintEvent(QPaintEvent *event);

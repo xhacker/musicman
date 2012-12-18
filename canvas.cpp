@@ -8,17 +8,40 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 const int window_height = 480;
 const int window_width = 640;
 
-void Canvas::setNotes(Note **notes_input)
+Note notes[200] =
 {
-    notes = notes_input;
-}
+    {1, 0, 450},
+    {2, 480, 930},
+    {3, 960, 1410},
+    {1, 1440, 2370},
+    {2, 2400, 2850},
+    {3, 2880, 3330},
+    {1, 3360, 4290},
+    {2, 4320, 4770},
+    {3, 4800, 5250},
+    {1, 528, 621},
+    {2, 624, 669},
+    {3, 672, 717},
+    {1, 720, 765},
+    {2, 768, 813},
+    {3, 816, 861},
+    {4, 864, 909},
+    {4, 1056, 1101},
+    {4, 1248, 1293},
+    {4, 1440, 1485},
+    {4, 2016, 2061}
+};
 
-Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), combo(0), combo_start(0), in_combo(false), elapsed(0)
+//void Canvas::setNotes(Note **notes_input)
+//{
+//    notes = notes_input;
+//}
+
+Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), combo(0), combo_start(0), in_combo(false), elapsed(0), current_note(0)
 {
     for (int i = 1; i <= 5; ++i)
     {
         isPressing[i] = false;
-        now_note[i] = 0;
     }
 }
 
@@ -102,27 +125,22 @@ void Canvas::drawBars(QPainter *painter)
 {
     QPen pen(Qt::white, 40, Qt::SolidLine, Qt::RoundCap);
     bool onKey = false;
-    for (int i = 1; i <= 5; ++i)
+    for (int i = current_note; notes[i].start <= elapsed + 100; ++i)
     {
-        printf("%d\n",notes[i][now_note][i].end);
-//        if (notes[i][now_note[i]].end < elapsed)
-//            now_note[i]++;
-//        if (notes[i][now_note[i]].start >= elapsed)
-//        {
-//            int bottom = -window_height/2 + elapsed / 10;
-//            int top = bottom - (notes[i][now_note[i]].end - notes[i][now_note[i]].start)/10;
-//            if (bottom <= window_height/2-100 && top >= window_height/2)
-//                onKey = true;
-//            else
-//                onKey = false;
-//            if (isPressing[i] && onKey)
-//                pen.setColor(Qt::gray);
-//            else
-//                pen.setColor(Qt::white);
-//            painter->setPen(pen);
-//            painter->drawLine(string_positions[i], top,
-//                              string_positions[i], bottom);
-//        }
+        int duration = (notes[i].end - notes[i].start)/10;
+        int bottom = -window_height/2 + elapsed / 10 - notes[i].start / 10;
+        int top = bottom - duration;
+        if (bottom >= window_height/2-100 && top <= window_height/2)
+            onKey = true;
+        else
+            onKey = false;
+        pen.setColor(Qt::white);
+        if (onKey&& isPressing[notes[i].key])
+            pen.setColor(Qt::gray);
+        painter->setPen(pen);
+        painter->drawLine(string_positions[notes[i].key], top,
+                string_positions[notes[i].key], bottom);
+
     }
 }
 

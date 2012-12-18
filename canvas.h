@@ -16,11 +16,14 @@ public slots:
 private:
     bool isPressing[6];
     int elapsed;
+    int score;
 protected:
     void paintEvent(QPaintEvent *event);
+    void drawScore(QPainter *qp);
     void drawStrings(QPainter *qp);
     void drawButtons(QPainter *qp);
     void drawBars(QPainter *qp);
+    void drawCombos(QPainter *qp);
 };
 
 #endif // CANVAS_H

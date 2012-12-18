@@ -2,6 +2,7 @@
 #define CANVAS_H
 
 #include <QWidget>
+#include "note.h"
 
 class Canvas : public QWidget
 {
@@ -20,6 +21,8 @@ private:
     int combo;
     int combo_start;
     bool in_combo;
+    int now_note[6];
+    Note notes[][];
 
 protected:
     void paintEvent(QPaintEvent *event);

@@ -13,6 +13,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), combo(0), combo_sta
     for (int i = 1; i <= 5; ++i)
     {
         isPressing[i] = false;
+        now_note[i] = 0;
     }
 }
 
@@ -24,8 +25,8 @@ void Canvas::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);
     drawScore(&painter);
     drawStrings(&painter);
-    drawButtons(&painter);
     drawBars(&painter);
+    drawButtons(&painter);
     if (isPressing[5] && !in_combo)
     {
         combo += 1;
@@ -43,13 +44,14 @@ void Canvas::drawScore(QPainter *painter)
     QPen pen(Qt::black, 2);
     QFont font;
     font.setPixelSize(20);
+//    font.setFamily("");
     painter->setPen(pen);
     painter->setFont(font);
     for (int i = 1; i <= 5; ++i)
         if (isPressing[i])
             score += 10;
     char score_text[20];
-    sprintf_s(score_text, "Score: %d", score);
+    sprintf(score_text, "Score: %d", score);
     painter->drawText(-window_width/2 + 30, -window_height/2 + 50, score_text);
 }
 
@@ -94,19 +96,27 @@ void Canvas::drawButtons(QPainter *painter)
 void Canvas::drawBars(QPainter *painter)
 {
     QPen pen(Qt::white, 40, Qt::SolidLine, Qt::RoundCap);
+    bool onKey = false;
     for (int i = 1; i <= 5; ++i)
     {
-        if (isPressing[i])
+        if (notes[i][now_note[i]].end < elapsed)
+            now_note[i]++;
+        if (notes[i][now_note[i]].start >= elapsed)
         {
-            pen.setColor(Qt::gray);
+            int bottom = -window_height/2 + elapsed / 10;
+            int top = bottom - (notes[i][now_note[i]].end - notes[i][now_note[i]].start);
+            if (bottom <= window_height/2-100 && top >= window_height/2)
+                onKey = true;
+            else
+                onKey = false;
+            if (isPressing[i] && onKey)
+                pen.setColor(Qt::gray);
+            else
+                pen.setColor(Qt::white);
+            painter->setPen(pen);
+            painter->drawLine(string_positions[i], top,
+                              string_positions[i], bottom);
         }
-        else
-        {
-            pen.setColor(Qt::white);
-        }
-        painter->setPen(pen);
-        painter->drawLine(string_positions[i], -window_height/2 + elapsed / 10 - 100 * i,
-                string_positions[i], -window_height/2 + elapsed / 10 + 100 - 100 * i);
     }
 }
 
@@ -130,11 +140,11 @@ void Canvas::drawCombos(QPainter *painter)
     QBrush brush(QColor(0, 0, 0, 0));
     QFont font;
     font.setPixelSize(50 + (elapsed-combo_start));
-    font.setFamily("Calibri");
+//    font.setFamily("");
     painter->setPen(pen);
     painter->setBrush(brush);
     painter->setFont(font);
     char combo_text[20];
-    sprintf_s(combo_text, "Combo x %d", combo);
+    sprintf(combo_text, "Combo x %d", combo);
     painter->drawText(QRect(-window_width/2, -window_height/2, window_width, window_height), Qt::AlignCenter, combo_text);
 }

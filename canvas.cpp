@@ -8,6 +8,11 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 const int window_height = 480;
 const int window_width = 640;
 
+void setNotes(Note **notes_input)
+{
+    notes = notes_input;
+}
+
 Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), combo(0), combo_start(0), in_combo(false), elapsed(0)
 {
     for (int i = 1; i <= 5; ++i)

@@ -22,9 +22,10 @@ private:
     int combo_start;
     bool in_combo;
     int now_note[6];
-    Note notes[][];
+    Note **notes;
 
 protected:
+    void setNotes(Note **notes_input);
     void paintEvent(QPaintEvent *event);
     void drawScore(QPainter *painter);
     void drawStrings(QPainter *painter);

@@ -1,56 +1,39 @@
-//#include "midi.h"
-//#include "note.h"
-//#include "jdksmidi/world.h"
-//#include "jdksmidi/midi.h"
-//#include "jdksmidi/msg.h"
-//#include "jdksmidi/sysex.h"
-//#include "jdksmidi/parser.h"
+#include "midi.h"
+#include "note.h"
+#include "jdksmidi/world.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
+#include "jdksmidi/parser.h"
 
-//Midi::Midi(std::string address)
-//{
-//    fprintf ( stdout, "mdparse:\n" );
-//    MIDIParser p ( 32 * 1024 );
-//    MIDIMessage m;
-//    FILE *f = fopen("D:\\jeffsong.mid", "r");
+using namespace jdksmidi;
 
-//    while ( !feof ( f ) )
+Midi::Midi(std::string address) : address(address)
+{
+}
+
+note[] Midi::parse()
+{
+
+//    FILE *out = fopen("parse.out", "w");
+//    MIDIParser p(32 * 1024);
+//    MIDITimedBigMessage m;
+//    FILE *f = fopen(address.c_str(), "r");
+
+//    while (!feof(f))
 //    {
-//        int c = fgetc ( f );
+//        int c = fgetc(f);
 
-//        if ( c == EOF )
+//        if (c == EOF)
 //            break;
 
-//        if ( p.Parse ( ( uchar ) c, &m ) )
+//        if (p.Parse((uchar)c, &m))
 //        {
-//            parse();
+//            // 84-88
+////            if (m.IsNote() && m.GetNote() <= 88)
+//            {
+//                fprintf(out, "%d\t%s\t%d\n", m.GetTime(), m.IsNoteOn() ? "On" : "Off", m.GetNote() - 83);
+//            }
 //        }
 //    }
-//return 0;
-//}
-
-//Midi::parse()
-//{
-//      int l = ex->GetLength();
-
-//        if ( normal_sysex )
-//        {
-//            fprintf ( f, "Normal System-Exclusive message Len=%d", l );
-//        }
-//        else
-//        {
-//            fprintf ( f, "Authorization System-Exclusive message Len=%d", l );
-//        }
-
-//        for ( int i = 0; i < l; ++i )
-//        {
-//            if ( ( ( i ) % 20 ) == 0 )
-//            {
-//            }
-//            fprintf ( f, "\n" );
-//            //文件头最后四位显示时间，第17 18位记录调号
-//            fprintf ( f, "%02x ", ( int ) ex->GetData ( i ) );
-//        }
-
-//        fprintf ( f, "\n" );
-//        fflush ( f );
-//}
+}

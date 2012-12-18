@@ -8,7 +8,9 @@ class Midi
 {
 public:
     Midi(std::string address);
-    Note parse();
+    note[] parse();
+private:
+    std::string address;
 };
 
 #endif // MIDI_H

@@ -1,9 +1,10 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "canvas.h"
 #include <Phonon>
 #include <QKeyEvent>
 #include <QTimer>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "canvas.h"
+#include "midi.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,6 +41,8 @@ void MainWindow::on_playButton_clicked()
     Phonon::Path path = Phonon::createPath(music_song, music_song_output);
     music_song->play();
     music_song_output->setMuted(true);
+    Midi midi("/Users/xhacker/Dropbox/Project/musicman-build-Desktop-Debug/Feelings/notes.mid");
+    midi.parse();
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), canvas, SLOT(animate()));

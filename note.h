@@ -1,19 +1,12 @@
 #ifndef NOTE_H
 #define NOTE_H
 
-#include <QWidget>
-
-class Note : public QWidget
+class Note
 {
-    Q_OBJECT
 public:
-    explicit Note(QWidget *parent = 0);
-    
-signals:
-    
-public slots:
-
-    
+    int start;
+    int end;
+    int key;
 };
 
 #endif // NOTE_H

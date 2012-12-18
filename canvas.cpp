@@ -1,5 +1,6 @@
 #include <QPainter>
 #include <QTimer>
+#include <mainwindow.h>
 #include "canvas.h"
 
 const int string_positions[6] = {0, -150, -75, 0, 75, 150};
@@ -9,7 +10,7 @@ const int window_height = 600;
 const int window_width = 800;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
-    score(0), combo(0), combo_start(0), in_combo(false), elapsed(0), current_note(0), midi("")
+    score(0), combo(0), combo_start(0), elapsed(0), in_combo(false), current_note(0), midi("")
 {
     starttime.start();
     for (int i = 1; i <= 5; ++i)
@@ -99,12 +100,12 @@ void Canvas::drawBars(QPainter *painter)
 {
     QPen pen(Qt::white, 40, Qt::SolidLine, Qt::RoundCap);
     bool onKey = false;
-    for (int i = current_note; midi.notes[i].start * 60 / midi.bpm * 1000 / division <= elapsed; ++i)
+    for (int i = current_note; midi.notes[i].start * 60 / midi.bpm * 1000 / division <= elapsed + 1000; ++i)
     {
-        int duration = (midi.notes[i].end - midi.notes[i].start) / 3;
-        int bottom = -window_height/2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 3;
+        int duration = (midi.notes[i].end - midi.notes[i].start) / 5;
+        int bottom = -window_height / 2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
         int top = bottom - duration;
-        if (bottom >= window_height/2-100 && top <= window_height/2)
+        if (bottom >= window_height / 2 - 100 && top <= window_height / 2)
             onKey = true;
         else
             onKey = false;
@@ -151,5 +152,6 @@ void Canvas::animate()
 {
     elapsed = starttime.elapsed();
     repaint();
+    if (elapsed >= 2400) ((MainWindow *)parent())->play();
 }
 

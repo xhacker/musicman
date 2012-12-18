@@ -19,6 +19,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::play()
+{
+    music_guitar->play();
+    music_song->play();
+}
+
 void MainWindow::on_tutorialButton_clicked()
 {
 }
@@ -32,14 +38,13 @@ void MainWindow::on_playButton_clicked()
 
     music_guitar = Phonon::createPlayer(Phonon::MusicCategory,
       Phonon::MediaSource("Feelings/guitar.mp3"));
-    music_guitar->play();
 
     music_song = new Phonon::MediaObject(this);
     music_song->setCurrentSource(Phonon::MediaSource("Feelings/song.mp3"));
     music_song_output =
         new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::Path path = Phonon::createPath(music_song, music_song_output);
-    music_song->play();
+
     music_song_output->setMuted(true);
     Midi midi("Feelings/notes.musicman");
     midi.parse();

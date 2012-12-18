@@ -14,7 +14,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     canvas.cpp \
     note.cpp \
     jdksmidi/jdksmidi_advancedsequencer.cpp \
@@ -45,9 +44,10 @@ SOURCES += main.cpp\
     jdksmidi/jdksmidi_tick.cpp \
     jdksmidi/jdksmidi_track.cpp \
     jdksmidi/jdksmidi_utils.cpp \
-    midi.cpp
+    midi.cpp \
+    mainwindow.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     canvas.h \
     note.h \
     jdksmidi/advancedsequencer.h \
@@ -81,6 +81,7 @@ HEADERS  += mainwindow.h \
     jdksmidi/track.h \
     jdksmidi/utils.h \
     jdksmidi/world.h \
-    midi.h
+    midi.h \
+    mainwindow.h
 
 FORMS    += mainwindow.ui

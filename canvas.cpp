@@ -8,36 +8,8 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 const int window_height = 480;
 const int window_width = 640;
 
-Note notes[200] =
-{
-    {1, 0, 450},
-    {2, 480, 930},
-    {3, 960, 1410},
-    {1, 1440, 2370},
-    {2, 2400, 2850},
-    {3, 2880, 3330},
-    {1, 3360, 4290},
-    {2, 4320, 4770},
-    {3, 4800, 5250},
-    {1, 528, 621},
-    {2, 624, 669},
-    {3, 672, 717},
-    {1, 720, 765},
-    {2, 768, 813},
-    {3, 816, 861},
-    {4, 864, 909},
-    {4, 1056, 1101},
-    {4, 1248, 1293},
-    {4, 1440, 1485},
-    {4, 2016, 2061}
-};
-
-//void Canvas::setNotes(Note **notes_input)
-//{
-//    notes = notes_input;
-//}
-
-Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), combo(0), combo_start(0), in_combo(false), elapsed(0), current_note(0)
+Canvas::Canvas(QWidget *parent) : QWidget(parent),
+    score(0), combo(0), combo_start(0), in_combo(false), elapsed(0), current_note(0), midi("")
 {
     for (int i = 1; i <= 5; ++i)
     {
@@ -53,7 +25,8 @@ void Canvas::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);
     drawScore(&painter);
     drawStrings(&painter);
-    drawBars(&painter);
+    if (midi.notes[current_note].end)
+        drawBars(&painter);
     drawButtons(&painter);
     if (isPressing[5] && !in_combo)
     {
@@ -125,37 +98,24 @@ void Canvas::drawBars(QPainter *painter)
 {
     QPen pen(Qt::white, 40, Qt::SolidLine, Qt::RoundCap);
     bool onKey = false;
-    for (int i = current_note; notes[i].start <= elapsed + 100; ++i)
+    for (int i = current_note; midi.notes[i].start * 60 / midi.bpm * 1000 / division <= elapsed; ++i)
     {
-        int duration = (notes[i].end - notes[i].start)/10;
-        int bottom = -window_height/2 + elapsed / 10 - notes[i].start / 10;
+        int duration = (midi.notes[i].end - midi.notes[i].start) / 3;
+        int bottom = -window_height/2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 3;
         int top = bottom - duration;
-        if (bottom >= window_height/2-100 && top <= window_height/2)
-            onKey = true;
-        else
-            onKey = false;
+//        if (bottom >= window_height/2-100 && top <= window_height/2)
+//            onKey = true;
+//        else
+//            onKey = false;
         pen.setColor(Qt::white);
-        if (onKey&& isPressing[notes[i].key])
-            pen.setColor(Qt::gray);
+//        if (onKey&& isPressing[midi.notes[i].key])
+//            pen.setColor(Qt::gray);
         painter->setPen(pen);
-        painter->drawLine(string_positions[notes[i].key], top,
-                string_positions[notes[i].key], bottom);
-
+        painter->drawLine(string_positions[midi.notes[i].key], top,
+                string_positions[midi.notes[i].key], bottom);
     }
-}
-
-void Canvas::setPressing(int which, bool pressing)
-{
-    if (which >= 1 && which <= 5)
-    {
-        isPressing[which] = pressing;
-    }
-}
-
-void Canvas::animate()
-{
-    elapsed = (elapsed + qobject_cast<QTimer*>(sender())->interval());
-    repaint();
+//    if (midi.notes[current_note].end <= elapsed * midi.bpm / 1000 / 60)
+//        ++current_note;
 }
 
 void Canvas::drawCombos(QPainter *painter)
@@ -172,3 +132,23 @@ void Canvas::drawCombos(QPainter *painter)
     sprintf(combo_text, "Combo x %d", combo);
     painter->drawText(QRect(-window_width/2, -window_height/2, window_width, window_height), Qt::AlignCenter, combo_text);
 }
+
+void Canvas::setPressing(int which, bool pressing)
+{
+    if (which >= 1 && which <= 5)
+    {
+        isPressing[which] = pressing;
+    }
+}
+
+void Canvas::setMidi(Midi new_midi)
+{
+    midi = new_midi;
+}
+
+void Canvas::animate()
+{
+    elapsed = (elapsed + qobject_cast<QTimer*>(sender())->interval());
+    repaint();
+}
+

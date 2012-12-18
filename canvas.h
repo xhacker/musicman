@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "note.h"
+#include "midi.h"
 
 class Canvas : public QWidget
 {
@@ -10,7 +11,7 @@ class Canvas : public QWidget
 public:
     Canvas(QWidget *parent = 0);
     void setPressing(int, bool);
-    void setNotes(Note **);
+    void setMidi(Midi);
 
 public slots:
     void animate();
@@ -23,7 +24,7 @@ private:
     int combo_start;
     bool in_combo;
     int current_note;
-//    Note **notes;
+    Midi midi;
 
 protected:
     void paintEvent(QPaintEvent *event);

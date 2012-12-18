@@ -103,13 +103,13 @@ void Canvas::drawBars(QPainter *painter)
         int duration = (midi.notes[i].end - midi.notes[i].start) / 3;
         int bottom = -window_height/2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 3;
         int top = bottom - duration;
-//        if (bottom >= window_height/2-100 && top <= window_height/2)
-//            onKey = true;
-//        else
-//            onKey = false;
+        if (bottom >= window_height/2-100 && top <= window_height/2)
+            onKey = true;
+        else
+            onKey = false;
         pen.setColor(Qt::white);
-//        if (onKey&& isPressing[midi.notes[i].key])
-//            pen.setColor(Qt::gray);
+        if (onKey&& isPressing[midi.notes[i].key])
+            pen.setColor(Qt::gray);
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], top,
                 string_positions[midi.notes[i].key], bottom);

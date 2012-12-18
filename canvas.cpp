@@ -5,8 +5,8 @@
 const int string_positions[6] = {0, -150, -75, 0, 75, 150};
 const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yellow, Qt::blue, Qt::magenta};
 
-const int window_height = 480;
-const int window_width = 640;
+const int window_height = 600;
+const int window_width = 800;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
     score(0), combo(0), combo_start(0), in_combo(false), elapsed(0), current_note(0), midi("")

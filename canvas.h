@@ -17,13 +17,17 @@ private:
     bool isPressing[6];
     int elapsed;
     int score;
+    int combo;
+    int combo_start;
+    bool in_combo;
+
 protected:
     void paintEvent(QPaintEvent *event);
-    void drawScore(QPainter *qp);
-    void drawStrings(QPainter *qp);
-    void drawButtons(QPainter *qp);
-    void drawBars(QPainter *qp);
-    void drawCombos(QPainter *qp);
+    void drawScore(QPainter *painter);
+    void drawStrings(QPainter *painter);
+    void drawButtons(QPainter *painter);
+    void drawBars(QPainter *painter);
+    void drawCombos(QPainter *painter);
 };
 
 #endif // CANVAS_H

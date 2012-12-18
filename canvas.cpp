@@ -8,7 +8,7 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 const int window_height = 480;
 const int window_width = 640;
 
-Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), elapsed(0)
+Canvas::Canvas(QWidget *parent) : QWidget(parent), score(0), combo(0), combo_start(0), in_combo(false), elapsed(0)
 {
     for (int i = 1; i <= 5; ++i)
     {
@@ -26,6 +26,16 @@ void Canvas::paintEvent(QPaintEvent *event)
     drawStrings(&painter);
     drawButtons(&painter);
     drawBars(&painter);
+    if (isPressing[5] && !in_combo)
+    {
+        combo += 1;
+        in_combo = true;
+        combo_start = elapsed;
+    }
+    if ((elapsed - combo_start) >= 255)
+        in_combo =false;
+    if (in_combo)
+        drawCombos(&painter);
 }
 
 void Canvas::drawScore(QPainter *painter)
@@ -39,7 +49,7 @@ void Canvas::drawScore(QPainter *painter)
         if (isPressing[i])
             score += 10;
     char score_text[20];
-    sprintf(score_text, "Score: %d", score);
+    sprintf_s(score_text, "Score: %d", score);
     painter->drawText(-window_width/2 + 30, -window_height/2 + 50, score_text);
 }
 
@@ -64,7 +74,6 @@ void Canvas::drawButtons(QPainter *painter)
 {
     QPen pen(Qt::black, 10, Qt::SolidLine, Qt::RoundCap);
     QBrush brush(Qt::black, Qt::SolidPattern);
-
     for (int i = 1; i <= 5; ++i)
     {
         if (isPressing[i])
@@ -88,9 +97,13 @@ void Canvas::drawBars(QPainter *painter)
     for (int i = 1; i <= 5; ++i)
     {
         if (isPressing[i])
+        {
             pen.setColor(Qt::gray);
+        }
         else
+        {
             pen.setColor(Qt::white);
+        }
         painter->setPen(pen);
         painter->drawLine(string_positions[i], -window_height/2 + elapsed / 10 - 100 * i,
                 string_positions[i], -window_height/2 + elapsed / 10 + 100 - 100 * i);
@@ -111,11 +124,17 @@ void Canvas::animate()
     repaint();
 }
 
-void drawCombos(QPainter *painter)
+void Canvas::drawCombos(QPainter *painter)
 {
-    QPen pen(Qt::red);
+    QPen pen(QColor(255, 0, 0, 255 - (elapsed-combo_start)));
+    QBrush brush(QColor(0, 0, 0, 0));
     QFont font;
-    font.setPixelSize(30);
+    font.setPixelSize(50 + (elapsed-combo_start));
+    font.setFamily("Calibri");
     painter->setPen(pen);
+    painter->setBrush(brush);
     painter->setFont(font);
+    char combo_text[20];
+    sprintf_s(combo_text, "Combo x %d", combo);
+    painter->drawText(QRect(-window_width/2, -window_height/2, window_width, window_height), Qt::AlignCenter, combo_text);
 }

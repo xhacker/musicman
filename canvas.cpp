@@ -11,6 +11,7 @@ const int window_width = 800;
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
     score(0), combo(0), combo_start(0), in_combo(false), elapsed(0), current_note(0), midi("")
 {
+    starttime.start();
     for (int i = 1; i <= 5; ++i)
     {
         isPressing[i] = false;
@@ -148,7 +149,7 @@ void Canvas::setMidi(Midi new_midi)
 
 void Canvas::animate()
 {
-    elapsed = (elapsed + qobject_cast<QTimer*>(sender())->interval());
+    elapsed = starttime.elapsed();
     repaint();
 }
 

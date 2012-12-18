@@ -2,6 +2,7 @@
 #define CANVAS_H
 
 #include <QWidget>
+#include <QTime>
 #include "note.h"
 #include "midi.h"
 
@@ -18,6 +19,7 @@ public slots:
 
 private:
     bool isPressing[6];
+    QTime starttime;
     int elapsed;
     int score;
     int combo;

@@ -39,7 +39,7 @@ void Canvas::paintEvent(QPaintEvent *event)
         combo_start = elapsed;
     }
     if ((elapsed - combo_start) >= 255)
-        in_combo =false;
+        in_combo = false;
     if (in_combo)
         drawCombos(&painter);
 }
@@ -104,24 +104,25 @@ void Canvas::drawBars(QPainter *painter)
     bool onKey = false;
     for (int i = 1; i <= 5; ++i)
     {
-        if (notes[i][now_note[i]].end < elapsed)
-            now_note[i]++;
-        if (notes[i][now_note[i]].start >= elapsed)
-        {
-            int bottom = -window_height/2 + elapsed / 10;
-            int top = bottom - (notes[i][now_note[i]].end - notes[i][now_note[i]].start);
-            if (bottom <= window_height/2-100 && top >= window_height/2)
-                onKey = true;
-            else
-                onKey = false;
-            if (isPressing[i] && onKey)
-                pen.setColor(Qt::gray);
-            else
-                pen.setColor(Qt::white);
-            painter->setPen(pen);
-            painter->drawLine(string_positions[i], top,
-                              string_positions[i], bottom);
-        }
+        printf("%d\n",notes[i][now_note][i].end);
+//        if (notes[i][now_note[i]].end < elapsed)
+//            now_note[i]++;
+//        if (notes[i][now_note[i]].start >= elapsed)
+//        {
+//            int bottom = -window_height/2 + elapsed / 10;
+//            int top = bottom - (notes[i][now_note[i]].end - notes[i][now_note[i]].start)/10;
+//            if (bottom <= window_height/2-100 && top >= window_height/2)
+//                onKey = true;
+//            else
+//                onKey = false;
+//            if (isPressing[i] && onKey)
+//                pen.setColor(Qt::gray);
+//            else
+//                pen.setColor(Qt::white);
+//            painter->setPen(pen);
+//            painter->drawLine(string_positions[i], top,
+//                              string_positions[i], bottom);
+//        }
     }
 }
 

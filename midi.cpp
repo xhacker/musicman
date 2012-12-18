@@ -15,7 +15,7 @@ Midi::Midi(std::string address) : address(address)
 Note **Midi::parse()
 {
     Note notes[6][200] = {
-        {
+        {{0,0,0},
              {1, 0, 45},
              {1, 144, 237},
              {1, 336, 429},
@@ -465,7 +465,7 @@ Note **Midi::parse()
              {4, 41184, 41277},
              {4, 41376, 41469},
              {4, 42048, 42141}
-             }
+             },{0,0,0}
     };
     return (Note **)notes;
 }

@@ -10,7 +10,7 @@ class Canvas : public QWidget
 public:
     Canvas(QWidget *parent = 0);
     void setPressing(int, bool);
-    void setNotes(Note **notes_input);
+    void setNotes(Note **);
 
 public slots:
     void animate();

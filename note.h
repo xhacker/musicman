@@ -4,9 +4,9 @@
 class Note
 {
 public:
+    int key;
     int start;
     int end;
-    int key;
 };
 
 #endif // NOTE_H

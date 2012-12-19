@@ -65,17 +65,15 @@ void Canvas::drawDebug(QPainter *painter)
     font.setFamily("Menlo");
     painter->setPen(pen);
     painter->setFont(font);
-    char debug_text_1[20], debug_text_2[20], debug_text_3[20], debug_text_4[20];
-    sprintf(debug_text_1, "In a Row:\t%d", inarow_count);
-    sprintf(debug_text_2, "Combo:\t%d", combo);
-    sprintf(debug_text_3, "Elapsed:\t%d", elapsed);
-    sprintf(debug_text_4, "Curnote:\t%d", current_note);
+    char debug_text[5][30];
+    sprintf(debug_text[0], "In a Row:\t%d", inarow_count);
+    sprintf(debug_text[1], "Combo:\t%d", combo);
+    sprintf(debug_text[2], "Elapsed:\t%d", elapsed);
+    sprintf(debug_text[3], "Curnote:\t%d", current_note);
     const int y = 100;
     const int line_height = 20;
-    painter->drawText(-window_width/2 + 30, -window_height/2 + y, debug_text_1);
-    painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height, debug_text_2);
-    painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height * 2, debug_text_3);
-    painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height * 3, debug_text_4);
+    for (int i = 0; i < 4; ++i)
+        painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height * i, debug_text[i]);
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -112,7 +110,7 @@ void Canvas::drawButtons(QPainter *painter)
         brush.setColor(string_colors[i]);
         painter->setPen(pen);
         painter->setBrush(brush);
-        painter->drawEllipse(string_positions[i] - 25, window_height/2-100, 50, 50);
+        painter->drawEllipse(string_positions[i] - 25, window_height / 2 - 100, 50, 50);
     }
 }
 
@@ -125,7 +123,7 @@ void Canvas::drawBars(QPainter *painter)
         int duration = (midi.notes[i].end - midi.notes[i].start) / 5;
         int bottom = -window_height / 2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
         int top = bottom - duration;
-        if (bottom >= window_height / 2 - 100 && top <= window_height / 2 - 50)
+        if (bottom >= window_height / 2 - 100 && top <= window_height / 2 - 45)
             onKey = true;
         else
             onKey = false;
@@ -134,7 +132,6 @@ void Canvas::drawBars(QPainter *painter)
         {
             if (isPressing[midi.notes[i].key])
             {
-                pen.setColor(Qt::gray);
                 if (!midi.notes[i].pressed())
                 {
                     midi.notes[i].setPressed(true);
@@ -149,14 +146,15 @@ void Canvas::drawBars(QPainter *painter)
                 }
                 score += 10 * (combo + 1);
             }
-            else
-            {
-            }
+        }
+        if (midi.notes[i].pressed())
+        {
+            pen.setColor(Qt::gray);
         }
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], top,
                 string_positions[midi.notes[i].key], bottom);
-        if (top > window_height/2 - 50)
+        if (top > window_height/2)
         {
             if (!midi.notes[current_note].pressed())
             {

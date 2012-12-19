@@ -1,6 +1,8 @@
 #include <Phonon>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QDir>
+#include <QString>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "canvas.h"
@@ -36,17 +38,18 @@ void MainWindow::on_playButton_clicked()
     canvas->resize(this->size());
     canvas->show();
 
+    QDir songdir(QDir::home().absoluteFilePath(".musicman/songs/Feelings/"));
     music_guitar = Phonon::createPlayer(Phonon::MusicCategory,
-      Phonon::MediaSource("Escape from Chaosland/guitar.mp3"));
+      Phonon::MediaSource(songdir.absoluteFilePath("guitar.mp3")));
 
     music_song = new Phonon::MediaObject(this);
-    music_song->setCurrentSource(Phonon::MediaSource("Escape from Chaosland/song.mp3"));
+    music_song->setCurrentSource(Phonon::MediaSource(songdir.absoluteFilePath("song.mp3")));
     music_song_output =
         new Phonon::AudioOutput(Phonon::MusicCategory, this);
-    Phonon::Path path = Phonon::createPath(music_song, music_song_output);
+    Phonon::createPath(music_song, music_song_output);
 
     music_song_output->setMuted(true);
-    Midi midi("Escape from Chaosland/notes.musicman");
+    Midi midi(songdir.absoluteFilePath("notes.musicman").toStdString());
     midi.parse();
     canvas->setMidi(midi);
 

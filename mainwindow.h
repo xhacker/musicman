@@ -31,8 +31,6 @@ private:
     Canvas *canvas;
     void hide_buttons();
 
-    void keyPressEvent(QKeyEvent *e);
-    void keyReleaseEvent(QKeyEvent *e);
     Phonon::MediaObject *music_guitar;
     Phonon::MediaObject *music_song;
     Phonon::AudioOutput *music_song_output;

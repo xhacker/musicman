@@ -69,27 +69,3 @@ void MainWindow::hide_buttons()
     ui->tutorialButton->setHidden(true);
     ui->quitButton->setHidden(true);
 }
-
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-   if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_5)
-   {
-       canvas->setPressing(event->key() - Qt::Key_1 + 1, true);
-   }
-   if (canvas->isGood())
-       music_song_output->setMuted(false);
-   else
-       music_song_output->setMuted(true);
-}
-
-void MainWindow::keyReleaseEvent(QKeyEvent *event)
-{
-   if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_5)
-   {
-       canvas->setPressing(event->key() - Qt::Key_1 + 1, false);
-   }
-   if (canvas->isGood())
-       music_song_output->setMuted(false);
-   else
-       music_song_output->setMuted(true);
-}

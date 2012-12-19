@@ -10,7 +10,7 @@ const int window_height = 600;
 const int window_width = 800;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
-    score(0), combo(0), combo_start(0), elapsed(0), in_combo(false), current_note(0),
+    score(0), combo(0), combo_start(0), elapsed(0), showing_combo(false), current_note(0),
     good(true), midi("")
 {
     starttime.start();
@@ -31,15 +31,16 @@ void Canvas::paintEvent(QPaintEvent *event)
     if (midi.notes[current_note].end)
         drawBars(&painter);
     drawButtons(&painter);
-    if (isPressing[5] && !in_combo)
+
+    if (isPressing[5] && !showing_combo)
     {
         combo += 1;
-        in_combo = true;
+        showing_combo = true;
         combo_start = elapsed;
     }
-    if ((elapsed - combo_start) >= 255)
-        in_combo = false;
-    if (in_combo)
+    if ((elapsed - combo_start) >= 255 * 2)
+        showing_combo = false;
+    if (showing_combo)
         drawCombos(&painter);
 }
 
@@ -48,7 +49,7 @@ void Canvas::drawScore(QPainter *painter)
     QPen pen(Qt::black, 2);
     QFont font;
     font.setPixelSize(20);
-//    font.setFamily("");
+    font.setFamily("Gill Sans");
     painter->setPen(pen);
     painter->setFont(font);
     for (int i = 1; i <= 5; ++i)
@@ -127,17 +128,15 @@ void Canvas::drawBars(QPainter *painter)
         painter->drawLine(string_positions[midi.notes[i].key], top,
                 string_positions[midi.notes[i].key], bottom);
     }
-//    if (midi.notes[current_note].end <= elapsed * midi.bpm / 1000 / 60)
-//        ++current_note;
 }
 
 void Canvas::drawCombos(QPainter *painter)
 {
-    QPen pen(QColor(255, 0, 0, 255 - (elapsed-combo_start)));
+    QPen pen(QColor(255, 0, 0, 255 - ((elapsed - combo_start) / 2)));
     QBrush brush(QColor(0, 0, 0, 0));
     QFont font;
-    font.setPixelSize(50 + (elapsed-combo_start));
-//    font.setFamily("");
+    font.setPixelSize(50 + ((elapsed - combo_start) / 2));
+    font.setFamily("Gill Sans");
     painter->setPen(pen);
     painter->setBrush(brush);
     painter->setFont(font);

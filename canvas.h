@@ -25,7 +25,7 @@ private:
     int score;
     int combo;
     int combo_start;
-    bool in_combo;
+    bool showing_combo;
     bool good; // play guitar or not
     int current_note;
     Midi midi;

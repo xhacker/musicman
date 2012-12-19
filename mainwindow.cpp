@@ -37,16 +37,16 @@ void MainWindow::on_playButton_clicked()
     canvas->show();
 
     music_guitar = Phonon::createPlayer(Phonon::MusicCategory,
-      Phonon::MediaSource("Feelings/guitar.mp3"));
+      Phonon::MediaSource("Escape from Chaosland/guitar.mp3"));
 
     music_song = new Phonon::MediaObject(this);
-    music_song->setCurrentSource(Phonon::MediaSource("Feelings/song.mp3"));
+    music_song->setCurrentSource(Phonon::MediaSource("Escape from Chaosland/song.mp3"));
     music_song_output =
         new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::Path path = Phonon::createPath(music_song, music_song_output);
 
     music_song_output->setMuted(true);
-    Midi midi("Feelings/notes.musicman");
+    Midi midi("Escape from Chaosland/notes.musicman");
     midi.parse();
     canvas->setMidi(midi);
 
@@ -71,16 +71,22 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
    if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_5)
    {
-       music_song_output->setMuted(false);
        canvas->setPressing(event->key() - Qt::Key_1 + 1, true);
    }
+   if (canvas->isGood())
+       music_song_output->setMuted(false);
+   else
+       music_song_output->setMuted(true);
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
    if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_5)
    {
-       music_song_output->setMuted(true);
        canvas->setPressing(event->key() - Qt::Key_1 + 1, false);
    }
+   if (canvas->isGood())
+       music_song_output->setMuted(false);
+   else
+       music_song_output->setMuted(true);
 }

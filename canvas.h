@@ -13,6 +13,7 @@ public:
     Canvas(QWidget *parent = 0);
     void setPressing(int, bool);
     void setMidi(Midi);
+    bool isGood();
 
 public slots:
     void animate();
@@ -25,6 +26,7 @@ private:
     int combo;
     int combo_start;
     bool in_combo;
+    bool good; // play guitar or not
     int current_note;
     Midi midi;
 

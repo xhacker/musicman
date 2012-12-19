@@ -10,7 +10,8 @@ const int window_height = 600;
 const int window_width = 800;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
-    score(0), combo(0), combo_start(0), elapsed(0), in_combo(false), current_note(0), midi("")
+    score(0), combo(0), combo_start(0), elapsed(0), in_combo(false), current_note(0),
+    good(true), midi("")
 {
     starttime.start();
     for (int i = 1; i <= 5; ++i)
@@ -110,8 +111,18 @@ void Canvas::drawBars(QPainter *painter)
         else
             onKey = false;
         pen.setColor(Qt::white);
-        if (onKey&& isPressing[midi.notes[i].key])
-            pen.setColor(Qt::gray);
+        if (onKey)
+        {
+            if (isPressing[midi.notes[i].key])
+            {
+                pen.setColor(Qt::gray);
+                good = true;
+            }
+            else
+            {
+                good = false;
+            }
+        }
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], top,
                 string_positions[midi.notes[i].key], bottom);
@@ -153,5 +164,10 @@ void Canvas::animate()
     elapsed = starttime.elapsed();
     repaint();
     if (elapsed >= 2400) ((MainWindow *)parent())->play();
+}
+
+bool Canvas::isGood()
+{
+    return good;
 }
 

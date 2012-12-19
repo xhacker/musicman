@@ -65,11 +65,17 @@ void Canvas::drawDebug(QPainter *painter)
     font.setFamily("Menlo");
     painter->setPen(pen);
     painter->setFont(font);
-    char debug_text_1[20], debug_text_2[20];
-    sprintf(debug_text_1, "In a Row: %d", inarow_count);
-    sprintf(debug_text_2, "Combo: %d", combo);
-    painter->drawText(-window_width/2 + 30, -window_height/2 + 80, debug_text_1);
-    painter->drawText(-window_width/2 + 30, -window_height/2 + 100, debug_text_2);
+    char debug_text_1[20], debug_text_2[20], debug_text_3[20], debug_text_4[20];
+    sprintf(debug_text_1, "In a Row:\t%d", inarow_count);
+    sprintf(debug_text_2, "Combo:\t%d", combo);
+    sprintf(debug_text_3, "Elapsed:\t%d", elapsed);
+    sprintf(debug_text_4, "Curnote:\t%d", current_note);
+    const int y = 100;
+    const int line_height = 20;
+    painter->drawText(-window_width/2 + 30, -window_height/2 + y, debug_text_1);
+    painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height, debug_text_2);
+    painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height * 2, debug_text_3);
+    painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height * 3, debug_text_4);
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -119,7 +125,7 @@ void Canvas::drawBars(QPainter *painter)
         int duration = (midi.notes[i].end - midi.notes[i].start) / 5;
         int bottom = -window_height / 2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
         int top = bottom - duration;
-        if (bottom >= window_height / 2 - 100 && top <= window_height / 2)
+        if (bottom >= window_height / 2 - 100 && top <= window_height / 2 - 50)
             onKey = true;
         else
             onKey = false;
@@ -150,6 +156,16 @@ void Canvas::drawBars(QPainter *painter)
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], top,
                 string_positions[midi.notes[i].key], bottom);
+        if (top > window_height/2 - 50)
+        {
+            if (!midi.notes[current_note].pressed())
+            {
+                inarow_count = 0;
+                combo = 0;
+    //            play_guile_sound();
+            }
+            current_note += 1;
+        }
     }
 }
 

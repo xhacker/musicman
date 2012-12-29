@@ -9,6 +9,10 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 
 const int window_height = 600;
 const int window_width = 800;
+const int wtop = -window_height/2;
+const int wbottom = window_height/2;
+const int wleft = -window_width/2;
+const int wright = window_width/2;
 
 const int combo_max = 20;
 
@@ -46,25 +50,13 @@ void Canvas::paintEvent(QPaintEvent *event)
 
 void Canvas::drawScore(QPainter *painter)
 {
-    QPen pen(Qt::black, 2);
-    QFont font;
-    font.setPixelSize(20);
-    font.setFamily("Gill Sans");
-    painter->setPen(pen);
-    painter->setFont(font);
     char score_text[20];
     sprintf(score_text, "Score: %d", score);
-    painter->drawText(-window_width/2 + 30, -window_height/2 + 50, score_text);
+    drawText(painter, Qt::black, score_text, 20, "Gill Sans", wleft + 30, wtop + 50);
 }
 
 void Canvas::drawDebug(QPainter *painter)
 {
-    QPen pen(Qt::black, 2);
-    QFont font;
-    font.setPixelSize(12);
-    font.setFamily("Menlo");
-    painter->setPen(pen);
-    painter->setFont(font);
     char debug_text[5][30];
     sprintf(debug_text[0], "In a Row:\t%d", inarow_count);
     sprintf(debug_text[1], "Combo:\t%d", combo);
@@ -73,7 +65,7 @@ void Canvas::drawDebug(QPainter *painter)
     const int y = 100;
     const int line_height = 20;
     for (int i = 0; i < 4; ++i)
-        painter->drawText(-window_width/2 + 30, -window_height/2 + y + line_height * i, debug_text[i]);
+        drawText(painter, Qt::black, debug_text[i], 12, "Menlo", wleft + 30, wtop + y + line_height*i);
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -121,9 +113,9 @@ void Canvas::drawBars(QPainter *painter)
     for (int i = current_note; midi.notes[i].start * 60 / midi.bpm * 1000 / division <= elapsed + 1000; ++i)
     {
         int duration = (midi.notes[i].end - midi.notes[i].start) / 5;
-        int bottom = -window_height / 2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
-        int top = bottom - duration;
-        if (bottom >= window_height / 2 - 100 && top <= window_height / 2 - 45)
+        int note_bottom = -window_height / 2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
+        int note_top = note_bottom - duration;
+        if (note_bottom >= window_height / 2 - 100 && note_top <= window_height / 2 - 45)
             onKey = true;
         else
             onKey = false;
@@ -152,9 +144,9 @@ void Canvas::drawBars(QPainter *painter)
             pen.setColor(Qt::gray);
         }
         painter->setPen(pen);
-        painter->drawLine(string_positions[midi.notes[i].key], top,
-                string_positions[midi.notes[i].key], bottom);
-        if (top > window_height/2)
+        painter->drawLine(string_positions[midi.notes[i].key], note_top,
+                string_positions[midi.notes[i].key], note_bottom);
+        if (note_top > window_height/2)
         {
             if (!midi.notes[current_note].pressed())
             {
@@ -169,17 +161,9 @@ void Canvas::drawBars(QPainter *painter)
 
 void Canvas::drawCombos(QPainter *painter)
 {
-    QPen pen(QColor(255, 0, 0, 255 - ((elapsed - combo_start) / 2)));
-    QBrush brush(QColor(0, 0, 0, 0));
-    QFont font;
-    font.setPixelSize(50 + ((elapsed - combo_start) / 2));
-    font.setFamily("Gill Sans");
-    painter->setPen(pen);
-    painter->setBrush(brush);
-    painter->setFont(font);
-    char combo_text[20];
+    char combo_text[40];
     sprintf(combo_text, "Combo x %d", combo);
-    painter->drawText(QRect(-window_width/2, -window_height/2, window_width, window_height), Qt::AlignCenter, combo_text);
+    drawText(painter, QColor(255, 0, 0, 255-((elapsed - combo_start) / 2)), combo_text, 50+((elapsed - combo_start) / 2), "Gill Sans", wleft, wtop, window_width, window_height);
 }
 
 void Canvas::setPressing(int which, bool pressing)
@@ -227,3 +211,33 @@ void Canvas::keyReleaseEvent(QKeyEvent *event)
 //       music_song_output->setMuted(true);
 }
 
+void Canvas::drawEnd(QPainter *painter)
+{
+    char score_text[40];
+    sprintf(score_text, "Your Score: %d", score);
+    drawText(painter, QColor(0, 255, 0, 255), score_text, 50, "Gill Sans", -window_width/2, -window_height/2, window_width, window_height);
+}
+
+void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char text[], const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y, const int& width, const int& height)
+{
+    QPen pen(word_color, 2);
+    QBrush brush(QColor(0, 0, 0, 0));
+    QFont font;
+    font.setPixelSize(fontSize);
+    font.setFamily(fontName);
+    painter->setPen(pen);
+    painter->setBrush(brush);
+    painter->setFont(font);
+    painter->drawText(QRect(top_left_x, top_left_y, width, height), Qt::AlignCenter, text);
+}
+
+void Canvas::drawText(QPainter *&painter, const QColor &word_color, const char text[], const int &fontSize, const char fontName[], const int &top_left_x, const int &top_left_y)
+{
+    QPen pen(word_color, 2);
+    QFont font;
+    font.setPixelSize(fontSize);
+    font.setFamily(fontName);
+    painter->setPen(pen);
+    painter->setFont(font);
+    painter->drawText(top_left_x, top_left_y, text);
+}

@@ -32,6 +32,8 @@ private:
 
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
+    void drawText(QPainter*& painter, const QColor& word_color, const char text[], const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y, const int& width, const int& height);
+    void drawText(QPainter*& painter, const QColor& word_color, const char text[], const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -41,6 +43,7 @@ protected:
     void drawButtons(QPainter *painter);
     void drawBars(QPainter *painter);
     void drawCombos(QPainter *painter);
+    void drawEnd(QPainter *painter);
 };
 
 #endif // CANVAS_H

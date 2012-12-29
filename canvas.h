@@ -13,12 +13,20 @@ public:
     Canvas(QWidget *parent = 0);
     void setPressing(int, bool);
     void setMidi(Midi);
-    bool isGood();
+    bool isGood() const;
 
 public slots:
     void animate();
 
 private:
+    int window_height;
+    int window_width;
+    int wtop() const;
+    int wbottom() const;
+    int wleft() const;
+    int wright() const;
+    int string_positions[6];
+
     bool isPressing[6];
     QTime starttime;
     int elapsed;

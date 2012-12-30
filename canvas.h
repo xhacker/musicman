@@ -25,11 +25,17 @@ private:
     int wbottom() const;
     int wleft() const;
     int wright() const;
-    int string_positions[6];
+    int string_w(int key) const;
+    double btn_d() const;
+    int beat_to_ms(int beats) const;
+    int elapsed() const;
 
     bool isPressing[6];
     QTime starttime;
-    int elapsed;
+    int string_positions[6];
+    int real_elapsed;
+    double ms_pixel_ratio;
+    int video_pre_ms;
     int score;
     int combo;
     int combo_start;
@@ -39,7 +45,6 @@ private:
     int current_note;
     Midi midi;
 
-    int stringWidth(int key);
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
     void drawText(QPainter*& painter, const QColor& word_color, const char text[],

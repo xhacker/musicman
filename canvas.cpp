@@ -9,7 +9,7 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 const int combo_max = 20;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
-    elapsed(0), score(0), combo(0), combo_start(0),
+    real_elapsed(0), score(0), combo(0), combo_start(0),
     inarow_count(0), is_good(true),
     showing_combo(false), current_note(0), midi("")
 {
@@ -48,7 +48,7 @@ void Canvas::paintEvent(QPaintEvent *event)
     resize(((MainWindow *)parent())->size());
     window_width = size().width();
     window_height = size().height();
-    int w = window_width / 10;
+    int w = 30 + window_width / 15;
     for (int i = 1; i <= 5; ++i)
         string_positions[i] = (-3 + i) * w;
     painter.setWindow(wleft(), wtop(), window_width, window_height);
@@ -60,7 +60,7 @@ void Canvas::paintEvent(QPaintEvent *event)
         drawBars(&painter);
     drawButtons(&painter);
 
-    if ((elapsed - combo_start) >= 255 * 2)
+    if ((elapsed() - combo_start) >= 255 * 2)
         showing_combo = false;
     if (showing_combo)
         drawCombos(&painter);
@@ -78,7 +78,7 @@ void Canvas::drawDebug(QPainter *painter)
     char debug_text[5][30];
     sprintf(debug_text[0], "In a Row:\t%d", inarow_count);
     sprintf(debug_text[1], "Combo:\t%d", combo);
-    sprintf(debug_text[2], "Elapsed:\t%d", elapsed);
+    sprintf(debug_text[2], "Elapsed:\t%d", elapsed());
     sprintf(debug_text[3], "Curnote:\t%d", current_note);
     const int y = 100;
     const int line_height = 20;
@@ -87,9 +87,14 @@ void Canvas::drawDebug(QPainter *painter)
                  wleft() + 30, wtop() + y + line_height * i);
 }
 
-int Canvas::stringWidth(int key)
+int Canvas::string_w(int key) const
 {
     return window_width / 50 - key;
+}
+
+double Canvas::btn_d() const
+{
+    return string_w(0) * 2.5;
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -98,10 +103,10 @@ void Canvas::drawStrings(QPainter *painter)
     for (int i = 1; i <= 5; ++i)
     {
         pen.setColor(Qt::gray);
-        pen.setWidth(stringWidth(i));
+        pen.setWidth(string_w(i));
         painter->setPen(pen);
-        painter->drawLine(string_positions[i] + stringWidth(i) / 5, wtop(),
-                          string_positions[i] + stringWidth(i) / 5, wbottom());
+        painter->drawLine(string_positions[i] + string_w(i) / 5, wtop(),
+                          string_positions[i] + string_w(i) / 5, wbottom());
 
         pen.setColor(string_colors[i]);
         painter->setPen(pen);
@@ -112,7 +117,7 @@ void Canvas::drawStrings(QPainter *painter)
 
 void Canvas::drawButtons(QPainter *painter)
 {
-    QPen pen(Qt::black, stringWidth(0) / 2, Qt::SolidLine, Qt::RoundCap);
+    QPen pen(Qt::black, string_w(0) / 2, Qt::SolidLine, Qt::RoundCap);
     QBrush brush(Qt::black, Qt::SolidPattern);
     for (int i = 1; i <= 5; ++i)
     {
@@ -127,9 +132,14 @@ void Canvas::drawButtons(QPainter *painter)
         brush.setColor(string_colors[i]);
         painter->setPen(pen);
         painter->setBrush(brush);
-        double button_diameter = stringWidth(0) * 2.5;
-        painter->drawEllipse(string_positions[i] - button_diameter/2, wbottom() - button_diameter/2*3, button_diameter, button_diameter);
+        painter->drawEllipse(string_positions[i] - btn_d() / 2, wbottom() - btn_d() * 1.5,
+                             btn_d(), btn_d());
     }
+}
+
+int Canvas::beat_to_ms(int beats) const
+{
+    return (int)((double)beats / midi.bpm * 60 * 1000 / division);
 }
 
 void Canvas::drawBars(QPainter *painter)
@@ -137,11 +147,13 @@ void Canvas::drawBars(QPainter *painter)
     QPen pen(Qt::white, 32, Qt::SolidLine, Qt::RoundCap);
     bool onKey = false;
 
-    for (int i = current_note; midi.notes[i].start * 60 / midi.bpm * 1000 / division <= elapsed + 1000; ++i)
+    for (int i = current_note; (beat_to_ms(midi.notes[i].start) - elapsed()) / ms_pixel_ratio <= window_height; ++i)
     {
-        int duration = (midi.notes[i].end - midi.notes[i].start) / 5;
-        int note_bottom = wtop() + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
-        int note_top = note_bottom - duration;
+        int height = (midi.notes[i].end - midi.notes[i].start) / ms_pixel_ratio + string_w(0) * 2;
+        int note_bottom = wtop() + string_w(0) +
+                (elapsed() - beat_to_ms(midi.notes[i].start)) / ms_pixel_ratio +
+                (window_height - btn_d() * 1.5 + string_w(0) / 2);
+        int note_top = note_bottom - height;
         if (note_bottom >= wbottom() - 100 && note_top <= wbottom() - 45)
             onKey = true;
         else
@@ -161,7 +173,7 @@ void Canvas::drawBars(QPainter *painter)
                     {
                         combo += 1;
                         showing_combo = true;
-                        combo_start = elapsed;
+                        combo_start = elapsed();
                     }
                 }
                 score += 10 * (combo + 1);
@@ -171,7 +183,7 @@ void Canvas::drawBars(QPainter *painter)
         {
             pen.setColor(Qt::gray);
         }
-        pen.setWidth((int)(stringWidth(0) * 1.5));
+        pen.setWidth(string_w(0));
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], note_top,
                 string_positions[midi.notes[i].key], note_bottom);
@@ -193,8 +205,8 @@ void Canvas::drawCombos(QPainter *painter)
 {
     char combo_text[40];
     sprintf(combo_text, "Combo x %d", combo);
-    drawText(painter, QColor(255, 0, 0, 255 - ((elapsed - combo_start) / 2)), combo_text,
-             50 + ((elapsed - combo_start) / 2), "Gill Sans",
+    drawText(painter, QColor(255, 0, 0, 255 - ((elapsed() - combo_start) / 2)), combo_text,
+             50 + ((elapsed() - combo_start) / 2), "Gill Sans",
              wleft(), wtop(), window_width, window_height);
 }
 
@@ -209,13 +221,21 @@ void Canvas::setPressing(int which, bool pressing)
 void Canvas::setMidi(Midi new_midi)
 {
     midi = new_midi;
+    ms_pixel_ratio = midi.bpm / 25.0;
+    video_pre_ms = size().height() * ms_pixel_ratio;
+}
+
+int Canvas::elapsed() const
+{
+    return real_elapsed - video_pre_ms;
 }
 
 void Canvas::animate()
 {
-    elapsed = starttime.elapsed();
+    real_elapsed = starttime.elapsed();
     repaint();
-    if (elapsed >= 2400) ((MainWindow *)parent())->play();
+    if (elapsed() > 0)
+        ((MainWindow *)parent())->play();
     if (isGood())
         ((MainWindow *)parent())->setGuitarMuted(false);
     else

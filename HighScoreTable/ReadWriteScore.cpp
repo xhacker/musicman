@@ -12,14 +12,14 @@
 #include "MusicHighScore.h"
 #include "ReadWriteScore.h"
 
-#define maxscores 10
+#define maxscores 100
 
 using namespace std;
 
 void ReadScore(string songscores){
 	string musicname, playername;
 	int score, i;
-	int numscores;
+	int numscores=0, count=0;
 
 	ofstream fout;
 	ifstream fin;
@@ -28,15 +28,17 @@ void ReadScore(string songscores){
 
 	HighScore list[maxscores];
 
-	for(i=0; i<=(maxscores-1); i++){//record all the data from the file and send to User class
+	for(i=0; i<=(maxscores-1)&&!fin.eof(); i++){//record all the data from the file and send to User class
 		fin >> musicname >> playername >> score; //These are the variable found in txt file
 		list[i].setMusicName(musicname);
 		list[i].setPlayer(playername);
 		list[i].setHighScore(score);
+		numscores++;
 	}
-	for(i=0; i<=(maxscores-1);i++){
-		if(list[i].getMusicName()==songscores){
-			cout<<"\n\t"<<i+1<<". "<<list[i].getPlayer()<<" with a score of: "<<list[i].getHighScore();
+	for(i=0; i<=(maxscores-1)&&numscores>=0;i++,numscores--){
+		if(list[i].getMusicName()==songscores&&count<=10){//only print out relavent song scores
+			cout<<"\n\t"<<". "<<list[i].getPlayer()<<" with a score of: "<<list[i].getHighScore();
+			count++;
 		}
 	}
 	cout<<endl;
@@ -55,7 +57,7 @@ void WriteScore(int newscore, string newuser, string newsong){
 
 	HighScore list[maxscores];
 
-	for(i=0; i<(maxscores-1); i++){
+	for(i=0; i<(maxscores-1)&&!fin.eof(); i++){
 		fin >> musicname >> playername >> score;
 		list[i].setMusicName(musicname);
 		list[i].setPlayer(playername);
@@ -86,18 +88,19 @@ void WriteScore(int newscore, string newuser, string newsong){
 	return;
 }
 
-/*Examply of Main to call High Score Table*/
-//void ReadScore();
+/*Example of Main to call High Score Table*/
+//void ReadScore(string songscores);
 //void WriteScore(int newscore, string newuser, string newsong);
 //
 //int main(void){
 //	int exit=0;
-//
+//	string songscores;
 //
 //	cin>>exit;
 //	while(exit!=1){
 //		if(exit==2)
-//			ReadScore();
+//			cin>>songscores;
+//			ReadScore(songscores);
 //		if(exit==3){
 //			string newuser, newsong;
 //			int newscore;

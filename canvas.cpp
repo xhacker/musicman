@@ -83,7 +83,8 @@ void Canvas::drawDebug(QPainter *painter)
     const int y = 100;
     const int line_height = 20;
     for (int i = 0; i < 4; ++i)
-        drawText(painter, Qt::black, debug_text[i], 12, "Menlo", wleft() + 30, wtop() + y + line_height*i);
+        drawText(painter, Qt::black, debug_text[i], 12, "Menlo",
+                 wleft() + 30, wtop() + y + line_height * i);
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -94,12 +95,14 @@ void Canvas::drawStrings(QPainter *painter)
         pen.setColor(Qt::gray);
         pen.setWidth(6 - i);
         painter->setPen(pen);
-        painter->drawLine(string_positions[i] + (10-i)/2, wtop(), string_positions[i] + (10-i)/2, wbottom());
+        painter->drawLine(string_positions[i] + (10 - i) / 2, wtop(),
+                          string_positions[i] + (10-i)/2, wbottom());
 
         pen.setColor(string_colors[i]);
         pen.setWidth(10 - i);
         painter->setPen(pen);
-        painter->drawLine(string_positions[i], wtop(), string_positions[i], wbottom());
+        painter->drawLine(string_positions[i], wtop(),
+                          string_positions[i], wbottom());
     }
 }
 
@@ -120,7 +123,7 @@ void Canvas::drawButtons(QPainter *painter)
         brush.setColor(string_colors[i]);
         painter->setPen(pen);
         painter->setBrush(brush);
-        painter->drawEllipse(string_positions[i] - 25, window_height / 2 - 100, 50, 50);
+        painter->drawEllipse(string_positions[i] - 25, wbottom() - 100, 50, 50);
     }
 }
 
@@ -132,9 +135,9 @@ void Canvas::drawBars(QPainter *painter)
     for (int i = current_note; midi.notes[i].start * 60 / midi.bpm * 1000 / division <= elapsed + 1000; ++i)
     {
         int duration = (midi.notes[i].end - midi.notes[i].start) / 5;
-        int note_bottom = -window_height / 2 + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
+        int note_bottom = wtop() + (elapsed - midi.notes[i].start * 60 / midi.bpm * 1000 / division) / 5;
         int note_top = note_bottom - duration;
-        if (note_bottom >= window_height / 2 - 100 && note_top <= window_height / 2 - 45)
+        if (note_bottom >= wbottom() - 100 && note_top <= wbottom() - 45)
             onKey = true;
         else
             onKey = false;
@@ -165,7 +168,7 @@ void Canvas::drawBars(QPainter *painter)
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], note_top,
                 string_positions[midi.notes[i].key], note_bottom);
-        if (note_top > window_height/2)
+        if (note_top > wbottom())
         {
             if (!midi.notes[current_note].pressed())
             {
@@ -182,7 +185,9 @@ void Canvas::drawCombos(QPainter *painter)
 {
     char combo_text[40];
     sprintf(combo_text, "Combo x %d", combo);
-    drawText(painter, QColor(255, 0, 0, 255-((elapsed - combo_start) / 2)), combo_text, 50+((elapsed - combo_start) / 2), "Gill Sans", wleft(), wtop(), window_width, window_height);
+    drawText(painter, QColor(255, 0, 0, 255 - ((elapsed - combo_start) / 2)), combo_text,
+             50 + ((elapsed - combo_start) / 2), "Gill Sans",
+             wleft(), wtop(), window_width, window_height);
 }
 
 void Canvas::setPressing(int which, bool pressing)
@@ -240,10 +245,14 @@ void Canvas::drawEnd(QPainter *painter)
 {
     char score_text[40];
     sprintf(score_text, "Your Score: %d", score);
-    drawText(painter, QColor(0, 255, 0, 255), score_text, 50, "Gill Sans", -window_width/2, -window_height/2, window_width, window_height);
+    drawText(painter, QColor(0, 255, 0, 255), score_text, 50, "Gill Sans",
+             wleft(), wtop(), window_width, window_height);
 }
 
-void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char text[], const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y, const int& width, const int& height)
+void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char text[],
+                      const int& fontSize, const char fontName[],
+                      const int& top_left_x, const int& top_left_y,
+                      const int& width, const int& height)
 {
     QPen pen(word_color, 2);
     QBrush brush(QColor(0, 0, 0, 0));
@@ -256,7 +265,9 @@ void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char t
     painter->drawText(QRect(top_left_x, top_left_y, width, height), Qt::AlignCenter, text);
 }
 
-void Canvas::drawText(QPainter *&painter, const QColor &word_color, const char text[], const int &fontSize, const char fontName[], const int &top_left_x, const int &top_left_y)
+void Canvas::drawText(QPainter *&painter, const QColor &word_color, const char text[],
+                      const int &fontSize, const char fontName[],
+                      const int &top_left_x, const int &top_left_y)
 {
     QPen pen(word_color, 2);
     QFont font;

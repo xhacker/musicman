@@ -31,17 +31,21 @@ private:
     QTime starttime;
     int elapsed;
     int score;
-    int inarow_count; // how many good presses in a row
     int combo;
     int combo_start;
+    int inarow_count; // how many good presses in a row
+    bool is_good;
     bool showing_combo;
     int current_note;
     Midi midi;
 
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
-    void drawText(QPainter*& painter, const QColor& word_color, const char text[], const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y, const int& width, const int& height);
-    void drawText(QPainter*& painter, const QColor& word_color, const char text[], const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
+    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
+                  const int& fontSize, const char fontName[], const int& top_left_x,
+                  const int& top_left_y, const int& width, const int& height);
+    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
+                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
 
 protected:
     void paintEvent(QPaintEvent *event);

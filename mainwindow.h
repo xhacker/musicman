@@ -18,6 +18,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void play();
+    void setGuitarMuted(bool);
 
 private slots:
     void on_tutorialButton_clicked();
@@ -32,6 +33,7 @@ private:
     void hide_buttons();
 
     Phonon::MediaObject *music_guitar;
+    Phonon::AudioOutput *music_guitar_output;
     Phonon::MediaObject *music_song;
     Phonon::AudioOutput *music_song_output;
 };

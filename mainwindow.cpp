@@ -27,6 +27,12 @@ void MainWindow::play()
     music_song->play();
 }
 
+void MainWindow::setGuitarMuted(bool muted)
+{
+    // TODO: reduce sound instead of mute
+    music_guitar_output->setMuted(muted);
+}
+
 void MainWindow::on_tutorialButton_clicked()
 {
 }
@@ -39,8 +45,12 @@ void MainWindow::on_playButton_clicked()
     canvas->show();
 
     QDir songdir(QDir::home().absoluteFilePath(".musicman/songs/Feelings/"));
-    music_guitar = Phonon::createPlayer(Phonon::MusicCategory,
-      Phonon::MediaSource(songdir.absoluteFilePath("guitar.mp3")));
+
+    music_guitar = new Phonon::MediaObject(this);
+    music_guitar->setCurrentSource(Phonon::MediaSource(songdir.absoluteFilePath("guitar.mp3")));
+    music_guitar_output =
+        new Phonon::AudioOutput(Phonon::MusicCategory, this);
+    Phonon::createPath(music_guitar, music_guitar_output);
 
     music_song = new Phonon::MediaObject(this);
     music_song->setCurrentSource(Phonon::MediaSource(songdir.absoluteFilePath("song.mp3")));
@@ -48,7 +58,6 @@ void MainWindow::on_playButton_clicked()
         new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::createPath(music_song, music_song_output);
 
-    music_song_output->setMuted(true);
     Midi midi(songdir.absoluteFilePath("notes.musicman").toStdString());
     midi.parse();
     canvas->setMidi(midi);

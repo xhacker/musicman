@@ -9,9 +9,9 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 const int combo_max = 20;
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
-    score(0), elapsed(0), combo(0), combo_start(0),
-    inarow_count(0), showing_combo(false),
-    current_note(0), midi("")
+    elapsed(0), score(0), combo(0), combo_start(0),
+    inarow_count(0), is_good(true),
+    showing_combo(false), current_note(0), midi("")
 {
     starttime.start();
     for (int i = 1; i <= 5; ++i)
@@ -149,6 +149,7 @@ void Canvas::drawBars(QPainter *painter)
                 if (!midi.notes[i].pressed())
                 {
                     midi.notes[i].setPressed(true);
+                    is_good = true;
                     inarow_count += 1;
                     if (inarow_count >= 8 && inarow_count % 8 == 0 &&
                             combo < combo_max && !showing_combo)
@@ -173,8 +174,9 @@ void Canvas::drawBars(QPainter *painter)
             if (!midi.notes[current_note].pressed())
             {
                 inarow_count = 0;
+                is_good = false;
                 combo = 0;
-    //            play_guile_sound();
+                // play_guile_sound();
             }
             current_note += 1;
         }
@@ -208,12 +210,15 @@ void Canvas::animate()
     elapsed = starttime.elapsed();
     repaint();
     if (elapsed >= 2400) ((MainWindow *)parent())->play();
+    if (isGood())
+        ((MainWindow *)parent())->setGuitarMuted(false);
+    else
+        ((MainWindow *)parent())->setGuitarMuted(true);
 }
 
 bool Canvas::isGood() const
 {
-    // TODO
-    return true;
+    return is_good;
 }
 
 void Canvas::keyPressEvent(QKeyEvent *event)
@@ -223,10 +228,6 @@ void Canvas::keyPressEvent(QKeyEvent *event)
        int key_no = event->key() - Qt::Key_1 + 1;
        setPressing(key_no, true);
    }
-//   if (canvas->isGood())
-//       music_song_output->setMuted(false);
-//   else
-//       music_song_output->setMuted(true);
 }
 
 void Canvas::keyReleaseEvent(QKeyEvent *event)
@@ -235,10 +236,6 @@ void Canvas::keyReleaseEvent(QKeyEvent *event)
    {
        setPressing(event->key() - Qt::Key_1 + 1, false);
    }
-//   if (canvas->isGood())
-//       music_song_output->setMuted(false);
-//   else
-//       music_song_output->setMuted(true);
 }
 
 void Canvas::drawEnd(QPainter *painter)

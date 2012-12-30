@@ -39,6 +39,7 @@ private:
     int current_note;
     Midi midi;
 
+    int stringWidth(int key);
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
     void drawText(QPainter*& painter, const QColor& word_color, const char text[],

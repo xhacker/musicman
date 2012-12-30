@@ -87,19 +87,23 @@ void Canvas::drawDebug(QPainter *painter)
                  wleft() + 30, wtop() + y + line_height * i);
 }
 
+int Canvas::stringWidth(int key)
+{
+    return window_width / 50 - key;
+}
+
 void Canvas::drawStrings(QPainter *painter)
 {
     QPen pen(Qt::black, 10, Qt::SolidLine);
     for (int i = 1; i <= 5; ++i)
     {
         pen.setColor(Qt::gray);
-        pen.setWidth(6 - i);
+        pen.setWidth(stringWidth(i));
         painter->setPen(pen);
-        painter->drawLine(string_positions[i] + (10 - i) / 2, wtop(),
-                          string_positions[i] + (10-i)/2, wbottom());
+        painter->drawLine(string_positions[i] + stringWidth(i) / 5, wtop(),
+                          string_positions[i] + stringWidth(i) / 5, wbottom());
 
         pen.setColor(string_colors[i]);
-        pen.setWidth(10 - i);
         painter->setPen(pen);
         painter->drawLine(string_positions[i], wtop(),
                           string_positions[i], wbottom());
@@ -108,7 +112,7 @@ void Canvas::drawStrings(QPainter *painter)
 
 void Canvas::drawButtons(QPainter *painter)
 {
-    QPen pen(Qt::black, 10, Qt::SolidLine, Qt::RoundCap);
+    QPen pen(Qt::black, stringWidth(0) / 2, Qt::SolidLine, Qt::RoundCap);
     QBrush brush(Qt::black, Qt::SolidPattern);
     for (int i = 1; i <= 5; ++i)
     {
@@ -123,7 +127,8 @@ void Canvas::drawButtons(QPainter *painter)
         brush.setColor(string_colors[i]);
         painter->setPen(pen);
         painter->setBrush(brush);
-        painter->drawEllipse(string_positions[i] - 25, wbottom() - 100, 50, 50);
+        double button_diameter = stringWidth(0) * 2.5;
+        painter->drawEllipse(string_positions[i] - button_diameter/2, wbottom() - button_diameter/2*3, button_diameter, button_diameter);
     }
 }
 
@@ -166,6 +171,7 @@ void Canvas::drawBars(QPainter *painter)
         {
             pen.setColor(Qt::gray);
         }
+        pen.setWidth((int)(stringWidth(0) * 1.5));
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], note_top,
                 string_positions[midi.notes[i].key], note_bottom);

@@ -66,7 +66,7 @@ void MainWindow::on_playButton_clicked()
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), canvas, SLOT(animate()));
-    timer->start(25);
+    timer->start(20);
 }
 
 void MainWindow::on_quitButton_clicked()

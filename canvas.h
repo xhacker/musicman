@@ -52,6 +52,8 @@ private:
                   const int& top_left_y, const int& width, const int& height);
     void drawText(QPainter*& painter, const QColor& word_color, const char text[],
                   const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
+    void drawText(QPainter*& painter, const QColor& word_color, const QString text,
+                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
 
 protected:
     void paintEvent(QPaintEvent *event);

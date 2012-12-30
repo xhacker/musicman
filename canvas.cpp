@@ -69,8 +69,8 @@ void Canvas::paintEvent(QPaintEvent *event)
 void Canvas::drawScore(QPainter *painter)
 {
     char score_text[20];
-    sprintf(score_text, "Score: %d", score);
-    drawText(painter, Qt::black, score_text, 20, "Gill Sans", wleft() + 30, wtop() + 50);
+    drawText(painter, Qt::black, QString("Score: %1").arg(score), 20, "Gill Sans",
+             wleft() + 30, wtop() + 50);
 }
 
 void Canvas::drawDebug(QPainter *painter)
@@ -221,7 +221,7 @@ void Canvas::setPressing(int which, bool pressing)
 void Canvas::setMidi(Midi new_midi)
 {
     midi = new_midi;
-    ms_pixel_ratio = midi.bpm / 25.0;
+    ms_pixel_ratio = midi.bpm / 18.0;
     video_pre_ms = size().height() * ms_pixel_ratio;
 }
 
@@ -288,9 +288,16 @@ void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char t
     painter->drawText(QRect(top_left_x, top_left_y, width, height), Qt::AlignCenter, text);
 }
 
-void Canvas::drawText(QPainter *&painter, const QColor &word_color, const char text[],
-                      const int &fontSize, const char fontName[],
-                      const int &top_left_x, const int &top_left_y)
+void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char text[],
+                      const int& fontSize, const char fontName[],
+                      const int& top_left_x, const int& top_left_y)
+{
+    drawText(painter, word_color, QString(text), fontSize, fontName, top_left_x, top_left_y);
+}
+
+void Canvas::drawText(QPainter*& painter, const QColor& word_color, const QString text,
+                      const int& fontSize, const char fontName[],
+                      const int& top_left_x, const int& top_left_y)
 {
     QPen pen(word_color, 2);
     QFont font;

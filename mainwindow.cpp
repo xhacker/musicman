@@ -29,8 +29,10 @@ void MainWindow::play()
 
 void MainWindow::setGuitarMuted(bool muted)
 {
-    // TODO: reduce sound instead of mute
-    music_guitar_output->setMuted(muted);
+    if (muted)
+        music_guitar_output->setVolume(0.4);
+    else
+        music_guitar_output->setVolume(1.0);
 }
 
 void MainWindow::on_tutorialButton_clicked()

@@ -6,13 +6,17 @@
 
 const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yellow, Qt::blue, Qt::magenta};
 
-const int combo_max = 20;
-const int pick_threshold = 200;
+const int combo_max = 4;
+const int combo_inarow = 10;
+const int press_threshold = 200;
+const int nopick_threshold = 300;
 const double guile_vol = 0.4;
+const int once_upon_a_time = -1314;
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-    is_picking(false), real_elapsed(0), last_picking(-1000),
-    score(0), combo(0), combo_start(0),
+    is_picking(false), real_elapsed(0),
+    last_picking(once_upon_a_time), last_good(once_upon_a_time),
+    score(0), combo(1), combo_start(0),
     inarow_count(0), is_good(true),
     showing_combo(false), current_note(0), midi("")
 {
@@ -20,6 +24,7 @@ Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), paren
     for (int i = 1; i <= 5; ++i)
     {
         is_pressing[i] = false;
+        last_pressing[i] = once_upon_a_time;
     }
     setFocus();
 }
@@ -90,14 +95,14 @@ void Canvas::drawDebug(QPainter *painter)
                  wleft() + 30, wtop() + y + line_height * i);
 }
 
-int Canvas::string_w(int key) const
+int Canvas::stringW(int key) const
 {
     return 7 + window_width / 100 - key;
 }
 
-double Canvas::btn_d() const
+double Canvas::btnD() const
 {
-    return string_w(0) * 2.5;
+    return stringW(0) * 2.5;
 }
 
 void Canvas::drawStrings(QPainter *painter)
@@ -106,10 +111,10 @@ void Canvas::drawStrings(QPainter *painter)
     for (int i = 1; i <= 5; ++i)
     {
         pen.setColor(Qt::gray);
-        pen.setWidth(string_w(i));
+        pen.setWidth(stringW(i));
         painter->setPen(pen);
-        painter->drawLine(string_positions[i] + string_w(i) / 5, wtop(),
-                          string_positions[i] + string_w(i) / 5, wbottom());
+        painter->drawLine(string_positions[i] + stringW(i) / 5, wtop(),
+                          string_positions[i] + stringW(i) / 5, wbottom());
 
         pen.setColor(string_colors[i]);
         painter->setPen(pen);
@@ -120,7 +125,7 @@ void Canvas::drawStrings(QPainter *painter)
 
 void Canvas::drawButtons(QPainter *painter)
 {
-    QPen pen(Qt::black, string_w(0) / 2, Qt::SolidLine, Qt::RoundCap);
+    QPen pen(Qt::black, stringW(0) / 2, Qt::SolidLine, Qt::RoundCap);
     QBrush brush(Qt::black, Qt::SolidPattern);
     for (int i = 1; i <= 5; ++i)
     {
@@ -135,12 +140,12 @@ void Canvas::drawButtons(QPainter *painter)
         brush.setColor(string_colors[i]);
         painter->setPen(pen);
         painter->setBrush(brush);
-        painter->drawEllipse(string_positions[i] - btn_d() / 2, wbottom() - btn_d() * 1.5,
-                             btn_d(), btn_d());
+        painter->drawEllipse(string_positions[i] - btnD() / 2, wbottom() - btnD() * 1.5,
+                             btnD(), btnD());
     }
 }
 
-int Canvas::beat_to_ms(int beats) const
+int Canvas::beatToMs(int beats) const
 {
     return (int)((double)beats / midi.bpm * 60 * 1000 / division);
 }
@@ -149,33 +154,35 @@ void Canvas::drawBars(QPainter *painter)
 {
     QPen pen(Qt::white, 32, Qt::SolidLine, Qt::FlatCap);
 
-    for (int i = current_note; (beat_to_ms(midi.notes[i].start) - elapsed()) / ms_pixel_ratio <= window_height; ++i)
+    for (int i = current_note; (beatToMs(midi.notes[i].start) - elapsed()) / ms_pixel_ratio <= window_height; ++i)
     {
-        int start_ms = beat_to_ms(midi.notes[i].start);
-        int end_ms = beat_to_ms(midi.notes[i].end);
+        int start_ms = beatToMs(midi.notes[i].start);
+        int end_ms = beatToMs(midi.notes[i].end);
+        int key = midi.notes[i].key;
         int height = (end_ms - start_ms) / ms_pixel_ratio;
         int note_bottom = wtop() + 100 / ms_pixel_ratio +
                 (elapsed() - start_ms) / ms_pixel_ratio +
-                (window_height - btn_d() * 1.5 + string_w(0) / 2);
+                (window_height - btnD() * 1.5 + stringW(0) / 2);
         int note_top = note_bottom - height;
         bool in_range;
-        if (note_bottom >= wbottom() - btn_d() * 1.5 && note_top <= wbottom() - btn_d() * 0.5)
+        if (note_bottom >= wbottom() - btnD() * 1.5 && note_top <= wbottom() - btnD() * 0.5)
             in_range = true;
         else
             in_range = false;
         pen.setColor(Qt::white);
-        if (in_range && is_pressing[midi.notes[i].key] && is_picking)
+        if (in_range && is_pressing[key] && is_picking)
         {
-            if (!midi.notes[i].pressed())
+            if ((inRange(last_picking, start_ms, press_threshold) &&
+                last_picking_with[key]) ||
+                (inRange(start_ms, last_good, nopick_threshold) &&
+                (inRange(last_pressing[key], start_ms, press_threshold))))
             {
-                if ((last_picking < start_ms + pick_threshold) &&
-                    (last_picking > start_ms - pick_threshold) &&
-                    last_picking_with[midi.notes[i].key])
+                if (!midi.notes[i].pressed())
                 {
                     midi.notes[i].setPressed(true);
                     is_good = true;
                     inarow_count += 1;
-                    if (inarow_count >= 8 && inarow_count % 8 == 0 &&
+                    if (inarow_count >= combo_inarow && inarow_count % combo_inarow == 0 &&
                             combo < combo_max && !showing_combo)
                     {
                         combo += 1;
@@ -183,19 +190,20 @@ void Canvas::drawBars(QPainter *painter)
                         combo_start = elapsed();
                     }
                 }
+                last_good = elapsed();
             }
-            score += 10 * (combo + 1);
+            score += combo;
         }
         if (midi.notes[i].pressed())
             pen.setColor(Qt::gray);
-        pen.setWidth(string_w(0));
+        pen.setWidth(stringW(0));
         painter->setPen(pen);
-        painter->drawLine(string_positions[midi.notes[i].key], note_top,
-                          string_positions[midi.notes[i].key], note_bottom);
-        double r = string_w(0) / 2;
-        painter->drawEllipse(string_positions[midi.notes[i].key] - r, note_bottom - r,
+        painter->drawLine(string_positions[key], note_top,
+                          string_positions[key], note_bottom);
+        double r = stringW(0) / 2;
+        painter->drawEllipse(string_positions[key] - r, note_bottom - r,
                 r * 2, r * 2);
-        if (elapsed() > start_ms + pick_threshold)
+        if (elapsed() > start_ms + press_threshold)
         {
             if (!midi.notes[current_note].pressed())
             {
@@ -205,7 +213,7 @@ void Canvas::drawBars(QPainter *painter)
                     is_good = false;
                 }
                 inarow_count = 0;
-                combo = 0;
+                combo = 1;
             }
         }
         if (note_top > wbottom())
@@ -266,8 +274,12 @@ void Canvas::keyPressEvent(QKeyEvent *event)
 {
    if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_5)
    {
-       int key_no = event->key() - Qt::Key_1 + 1;
-       setPressing(key_no, true);
+       int key = event->key() - Qt::Key_1 + 1;
+       if (!is_pressing[key])
+       {
+           setPressing(key, true);
+           last_pressing[key] = elapsed();
+       }
    }
    else if ((event->key() == Qt::Key_Return) && !is_picking)
    {
@@ -347,4 +359,10 @@ void Canvas::playGuileSound()
 
     guile_output->setVolume(guile_vol);
     guile->play();
+}
+
+bool inRange(int number, int value, int threshold)
+{
+    return (number <= value + threshold &&
+            number >= value - threshold);
 }

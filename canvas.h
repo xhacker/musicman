@@ -20,38 +20,44 @@ public slots:
 private:
     int window_height;
     int window_width;
-    int wtop() const;
-    int wbottom() const;
-    int wleft() const;
-    int wright() const;
-    int string_w(int key) const;
-    double btn_d() const;
-    int beat_to_ms(int beats) const;
-    int elapsed() const;
 
     bool is_pressing[6];
+    int last_pressing[6];
     bool is_picking;
-    QTime starttime;
-    int string_positions[6];
-    int real_elapsed;
     int last_picking;
     bool last_picking_with[6];
+
+    QTime starttime;
+    int real_elapsed;
+    int last_good;
+
     double ms_pixel_ratio;
     int video_pre_ms;
+    int string_positions[6];
+    int current_note;
+
     int score;
+    bool is_good;
     int combo;
+    bool showing_combo;
     int combo_start;
     int inarow_count; // how many good presses in a row
-    bool is_good;
-    bool showing_combo;
-    int current_note;
+
     Midi midi;
 
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
 
 protected:
-    void setPressing(int, bool);
+    int wtop() const;
+    int wbottom() const;
+    int wleft() const;
+    int wright() const;
+    int stringW(int key) const;
+    double btnD() const;
+    int beatToMs(int beats) const;
+    int elapsed() const;
+
     void paintEvent(QPaintEvent *event);
     void drawScore(QPainter *painter);
     void drawDebug(QPainter *painter);
@@ -60,6 +66,7 @@ protected:
     void drawBars(QPainter *painter);
     void drawCombos(QPainter *painter);
     void drawEnd(QPainter *painter);
+
     void drawText(QPainter*& painter, const QColor& word_color, const char text[],
                   const int& fontSize, const char fontName[], const int& top_left_x,
                   const int& top_left_y, const int& width, const int& height);
@@ -67,8 +74,12 @@ protected:
                   const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
     void drawText(QPainter*& painter, const QColor& word_color, const QString text,
                   const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
+
+    void setPressing(int, bool);
     void playGuileSound();
     bool isGood() const;
 };
+
+bool inRange(int number, int value, int threshold);
 
 #endif // CANVAS_H

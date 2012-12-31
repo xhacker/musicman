@@ -8,7 +8,7 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 
 const int combo_max = 20;
 
-Canvas::Canvas(QWidget *parent) : QWidget(parent),
+Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     real_elapsed(0), score(0), combo(0), combo_start(0),
     inarow_count(0), is_good(true),
     showing_combo(false), current_note(0), midi("")
@@ -45,6 +45,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
     resize(((MainWindow *)parent())->size());
     window_width = size().width();
     window_height = size().height();
@@ -52,7 +53,6 @@ void Canvas::paintEvent(QPaintEvent *event)
     for (int i = 1; i <= 5; ++i)
         string_positions[i] = (-3 + i) * w;
     painter.setWindow(wleft(), wtop(), window_width, window_height);
-    painter.setRenderHint(QPainter::Antialiasing);
     drawScore(&painter);
     drawDebug(&painter);
     drawStrings(&painter);
@@ -60,7 +60,7 @@ void Canvas::paintEvent(QPaintEvent *event)
         drawBars(&painter);
     drawButtons(&painter);
 
-    if ((elapsed() - combo_start) >= 255 * 2)
+    if ((elapsed() - combo_start) >= 255 * 3)
         showing_combo = false;
     if (showing_combo)
         drawCombos(&painter);
@@ -68,7 +68,6 @@ void Canvas::paintEvent(QPaintEvent *event)
 
 void Canvas::drawScore(QPainter *painter)
 {
-    char score_text[20];
     drawText(painter, Qt::black, QString("Score: %1").arg(score), 20, "Gill Sans",
              wleft() + 30, wtop() + 50);
 }
@@ -169,7 +168,7 @@ void Canvas::drawBars(QPainter *painter)
                     is_good = true;
                     inarow_count += 1;
                     if (inarow_count >= 8 && inarow_count % 8 == 0 &&
-                            combo < combo_max && !showing_combo)
+                        combo < combo_max && !showing_combo)
                     {
                         combo += 1;
                         showing_combo = true;
@@ -186,7 +185,7 @@ void Canvas::drawBars(QPainter *painter)
         pen.setWidth(string_w(0));
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], note_top,
-                string_positions[midi.notes[i].key], note_bottom);
+                          string_positions[midi.notes[i].key], note_bottom);
         if (note_top > wbottom())
         {
             if (!midi.notes[current_note].pressed())
@@ -205,8 +204,8 @@ void Canvas::drawCombos(QPainter *painter)
 {
     char combo_text[40];
     sprintf(combo_text, "Combo x %d", combo);
-    drawText(painter, QColor(255, 0, 0, 255 - ((elapsed() - combo_start) / 2)), combo_text,
-             50 + ((elapsed() - combo_start) / 2), "Gill Sans",
+    drawText(painter, QColor(255, 0, 0, 255 - ((elapsed() - combo_start) / 3)), combo_text,
+             50 + ((elapsed() - combo_start) / 3), "Gill Sans",
              wleft(), wtop(), window_width, window_height);
 }
 

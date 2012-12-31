@@ -1,12 +1,13 @@
 #ifndef CANVAS_H
 #define CANVAS_H
 
-#include <QWidget>
 #include <QTime>
+#include <QWidget>
+#include <QGLWidget>
 #include "note.h"
 #include "midi.h"
 
-class Canvas : public QWidget
+class Canvas : public QGLWidget
 {
     Q_OBJECT
 public:

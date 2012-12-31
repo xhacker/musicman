@@ -7,7 +7,8 @@
 const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yellow, Qt::blue, Qt::magenta};
 
 const int combo_max = 20;
-const double guile_vol = 0.25;
+const int pick_threshold = 200;
+const double guile_vol = 0.4;
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     is_picking(false), real_elapsed(0), last_picking(-1000),
@@ -76,14 +77,15 @@ void Canvas::drawScore(QPainter *painter)
 
 void Canvas::drawDebug(QPainter *painter)
 {
-    char debug_text[5][30];
-    sprintf(debug_text[0], "In a Row:\t%d", inarow_count);
-    sprintf(debug_text[1], "Combo:\t%d", combo);
-    sprintf(debug_text[2], "Elapsed:\t%d", elapsed());
-    sprintf(debug_text[3], "Curnote:\t%d", current_note);
+    QString debug_text[10];
+    debug_text[0] = QString("In a Row:\t%1").arg(inarow_count);
+    debug_text[1] = QString("Combo:\t%1").arg(combo);
+    debug_text[2] = QString("Elapsed:\t%1").arg(elapsed());
+    debug_text[3] = QString("Curnote:\t%1").arg(current_note);
+    debug_text[4] = QString("Picking:\t%1").arg(is_picking);
     const int y = 100;
     const int line_height = 20;
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 5; ++i)
         drawText(painter, Qt::black, debug_text[i], 12, "Menlo",
                  wleft() + 30, wtop() + y + line_height * i);
 }
@@ -146,44 +148,46 @@ int Canvas::beat_to_ms(int beats) const
 void Canvas::drawBars(QPainter *painter)
 {
     QPen pen(Qt::white, 32, Qt::SolidLine, Qt::FlatCap);
-    bool onKey = false;
 
     for (int i = current_note; (beat_to_ms(midi.notes[i].start) - elapsed()) / ms_pixel_ratio <= window_height; ++i)
     {
-        int height = (midi.notes[i].end - midi.notes[i].start) / ms_pixel_ratio + 200 / ms_pixel_ratio;
+        int start_ms = beat_to_ms(midi.notes[i].start);
+        int end_ms = beat_to_ms(midi.notes[i].end);
+        int height = (end_ms - start_ms) / ms_pixel_ratio;
         int note_bottom = wtop() + 100 / ms_pixel_ratio +
-                (elapsed() - beat_to_ms(midi.notes[i].start)) / ms_pixel_ratio +
+                (elapsed() - start_ms) / ms_pixel_ratio +
                 (window_height - btn_d() * 1.5 + string_w(0) / 2);
         int note_top = note_bottom - height;
+        bool in_range;
         if (note_bottom >= wbottom() - btn_d() * 1.5 && note_top <= wbottom() - btn_d() * 0.5)
-            onKey = true;
+            in_range = true;
         else
-            onKey = false;
+            in_range = false;
         pen.setColor(Qt::white);
-        if (onKey)
+        if (in_range && is_pressing[midi.notes[i].key] && is_picking)
         {
-            if (is_pressing[midi.notes[i].key])
+            if (!midi.notes[i].pressed())
             {
-                if (!midi.notes[i].pressed())
+                if ((last_picking < start_ms + pick_threshold) &&
+                    (last_picking > start_ms - pick_threshold) &&
+                    last_picking_with[midi.notes[i].key])
                 {
                     midi.notes[i].setPressed(true);
                     is_good = true;
                     inarow_count += 1;
                     if (inarow_count >= 8 && inarow_count % 8 == 0 &&
-                        combo < combo_max && !showing_combo)
+                            combo < combo_max && !showing_combo)
                     {
                         combo += 1;
                         showing_combo = true;
                         combo_start = elapsed();
                     }
                 }
-                score += 10 * (combo + 1);
             }
+            score += 10 * (combo + 1);
         }
         if (midi.notes[i].pressed())
-        {
             pen.setColor(Qt::gray);
-        }
         pen.setWidth(string_w(0));
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], note_top,
@@ -191,7 +195,7 @@ void Canvas::drawBars(QPainter *painter)
         double r = string_w(0) / 2;
         painter->drawEllipse(string_positions[midi.notes[i].key] - r, note_bottom - r,
                 r * 2, r * 2);
-        if (note_top > wbottom())
+        if (elapsed() > start_ms + pick_threshold)
         {
             if (!midi.notes[current_note].pressed())
             {
@@ -203,6 +207,9 @@ void Canvas::drawBars(QPainter *painter)
                 inarow_count = 0;
                 combo = 0;
             }
+        }
+        if (note_top > wbottom())
+        {
             current_note += 1;
         }
     }
@@ -228,7 +235,7 @@ void Canvas::setPressing(int which, bool pressing)
 void Canvas::setMidi(Midi new_midi)
 {
     midi = new_midi;
-    ms_pixel_ratio = 7.0 - midi.bpm / 4.50;
+    ms_pixel_ratio = 7.0 - midi.bpm / 45.0;
     video_pre_ms = size().height() * ms_pixel_ratio;
     printf("ms_pixel_ratio: %.2lf\n", ms_pixel_ratio);
 }
@@ -262,10 +269,14 @@ void Canvas::keyPressEvent(QKeyEvent *event)
        int key_no = event->key() - Qt::Key_1 + 1;
        setPressing(key_no, true);
    }
-   else if (event->key() == Qt::Key_Enter && !is_picking)
+   else if ((event->key() == Qt::Key_Return) && !is_picking)
    {
        is_picking = true;
        last_picking = elapsed();
+       for (int i = 1; i <= 5; ++i)
+       {
+           last_picking_with[i] = is_pressing[i];
+       }
    }
 }
 
@@ -275,7 +286,7 @@ void Canvas::keyReleaseEvent(QKeyEvent *event)
    {
        setPressing(event->key() - Qt::Key_1 + 1, false);
    }
-   else if (event->key() == Qt::Key_Enter)
+   else if (event->key() == Qt::Key_Return)
    {
        is_picking = false;
    }

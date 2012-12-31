@@ -35,6 +35,7 @@ private:
     int string_positions[6];
     int real_elapsed;
     int last_picking;
+    bool last_picking_with[6];
     double ms_pixel_ratio;
     int video_pre_ms;
     int score;

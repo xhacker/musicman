@@ -8,8 +8,8 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 
 const int combo_max = 4;
 const int combo_inarow = 10;
-const int press_threshold = 200;
-const int nopick_threshold = 300;
+const int press_threshold = 300;
+const int nopick_threshold = 400;
 const double guile_vol = 0.4;
 const int once_upon_a_time = -1314;
 
@@ -164,18 +164,19 @@ void Canvas::drawBars(QPainter *painter)
                 (elapsed() - start_ms) / ms_pixel_ratio +
                 (window_height - btnD() * 1.5 + stringW(0) / 2);
         int note_top = note_bottom - height;
-        bool in_range;
+        bool in_bar;
         if (note_bottom >= wbottom() - btnD() * 1.5 && note_top <= wbottom() - btnD() * 0.5)
-            in_range = true;
+            in_bar = true;
         else
-            in_range = false;
+            in_bar = false;
         pen.setColor(Qt::white);
-        if (in_range && is_pressing[key] && is_picking)
+        if (in_bar && is_pressing[key] && is_picking)
         {
             if ((inRange(last_picking, start_ms, press_threshold) &&
                 last_picking_with[key]) ||
-                (inRange(start_ms, last_good, nopick_threshold) &&
-                (inRange(last_pressing[key], start_ms, press_threshold))))
+                (inRange(last_good, start_ms, nopick_threshold) &&
+                (inRange(last_pressing[key], start_ms, press_threshold))) ||
+                midi.notes[i].pressed())
             {
                 if (!midi.notes[i].pressed())
                 {
@@ -191,8 +192,8 @@ void Canvas::drawBars(QPainter *painter)
                     }
                 }
                 last_good = elapsed();
+                score += combo;
             }
-            score += combo;
         }
         if (midi.notes[i].pressed())
             pen.setColor(Qt::gray);

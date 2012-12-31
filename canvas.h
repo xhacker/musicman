@@ -65,6 +65,7 @@ protected:
     void drawBars(QPainter *painter);
     void drawCombos(QPainter *painter);
     void drawEnd(QPainter *painter);
+    void playGuileSound();
 };
 
 #endif // CANVAS_H

@@ -7,6 +7,7 @@
 const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yellow, Qt::blue, Qt::magenta};
 
 const int combo_max = 20;
+const double guile_vol = 0.25;
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     real_elapsed(0), score(0), combo(0), combo_start(0),
@@ -190,10 +191,13 @@ void Canvas::drawBars(QPainter *painter)
         {
             if (!midi.notes[current_note].pressed())
             {
+                if (is_good)
+                {
+                    playGuileSound();
+                    is_good = false;
+                }
                 inarow_count = 0;
-                is_good = false;
                 combo = 0;
-                // play_guile_sound();
             }
             current_note += 1;
         }
@@ -305,4 +309,17 @@ void Canvas::drawText(QPainter*& painter, const QColor& word_color, const QStrin
     painter->setPen(pen);
     painter->setFont(font);
     painter->drawText(top_left_x, top_left_y, text);
+}
+
+void Canvas::playGuileSound()
+{
+    Phonon::MediaObject *guile = new Phonon::MediaObject(this);
+    int which_sound = qrand() % 6 + 1;
+    guile->setCurrentSource(Phonon::MediaSource(QString(":/sound/screwup%1.mp3").arg(which_sound)));
+    Phonon::AudioOutput *guile_output =
+        new Phonon::AudioOutput(Phonon::MusicCategory, this);
+    Phonon::createPath(guile, guile_output);
+
+    guile_output->setVolume(guile_vol);
+    guile->play();
 }

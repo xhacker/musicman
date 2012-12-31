@@ -12,9 +12,7 @@ class Canvas : public QGLWidget
     Q_OBJECT
 public:
     Canvas(QWidget *parent = 0);
-    void setPressing(int, bool);
     void setMidi(Midi);
-    bool isGood() const;
 
 public slots:
     void animate();
@@ -31,10 +29,12 @@ private:
     int beat_to_ms(int beats) const;
     int elapsed() const;
 
-    bool isPressing[6];
+    bool is_pressing[6];
+    bool is_picking;
     QTime starttime;
     int string_positions[6];
     int real_elapsed;
+    int last_picking;
     double ms_pixel_ratio;
     int video_pre_ms;
     int score;
@@ -48,15 +48,9 @@ private:
 
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
-    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
-                  const int& fontSize, const char fontName[], const int& top_left_x,
-                  const int& top_left_y, const int& width, const int& height);
-    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
-                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
-    void drawText(QPainter*& painter, const QColor& word_color, const QString text,
-                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
 
 protected:
+    void setPressing(int, bool);
     void paintEvent(QPaintEvent *event);
     void drawScore(QPainter *painter);
     void drawDebug(QPainter *painter);
@@ -65,7 +59,15 @@ protected:
     void drawBars(QPainter *painter);
     void drawCombos(QPainter *painter);
     void drawEnd(QPainter *painter);
+    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
+                  const int& fontSize, const char fontName[], const int& top_left_x,
+                  const int& top_left_y, const int& width, const int& height);
+    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
+                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
+    void drawText(QPainter*& painter, const QColor& word_color, const QString text,
+                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
     void playGuileSound();
+    bool isGood() const;
 };
 
 #endif // CANVAS_H

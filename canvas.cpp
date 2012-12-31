@@ -10,14 +10,15 @@ const int combo_max = 20;
 const double guile_vol = 0.25;
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-    real_elapsed(0), score(0), combo(0), combo_start(0),
+    is_picking(false), real_elapsed(0), last_picking(-1000),
+    score(0), combo(0), combo_start(0),
     inarow_count(0), is_good(true),
     showing_combo(false), current_note(0), midi("")
 {
     starttime.start();
     for (int i = 1; i <= 5; ++i)
     {
-        isPressing[i] = false;
+        is_pressing[i] = false;
     }
     setFocus();
 }
@@ -50,7 +51,7 @@ void Canvas::paintEvent(QPaintEvent *event)
     resize(((MainWindow *)parent())->size());
     window_width = size().width();
     window_height = size().height();
-    int w = 30 + window_width / 15;
+    int w = 30 + window_width / 20;
     for (int i = 1; i <= 5; ++i)
         string_positions[i] = (-3 + i) * w;
     painter.setWindow(wleft(), wtop(), window_width, window_height);
@@ -89,7 +90,7 @@ void Canvas::drawDebug(QPainter *painter)
 
 int Canvas::string_w(int key) const
 {
-    return window_width / 50 - key;
+    return 7 + window_width / 100 - key;
 }
 
 double Canvas::btn_d() const
@@ -121,7 +122,7 @@ void Canvas::drawButtons(QPainter *painter)
     QBrush brush(Qt::black, Qt::SolidPattern);
     for (int i = 1; i <= 5; ++i)
     {
-        if (isPressing[i])
+        if (is_pressing[i])
         {
             pen.setColor(Qt::gray);
         }
@@ -144,24 +145,24 @@ int Canvas::beat_to_ms(int beats) const
 
 void Canvas::drawBars(QPainter *painter)
 {
-    QPen pen(Qt::white, 32, Qt::SolidLine, Qt::RoundCap);
+    QPen pen(Qt::white, 32, Qt::SolidLine, Qt::FlatCap);
     bool onKey = false;
 
     for (int i = current_note; (beat_to_ms(midi.notes[i].start) - elapsed()) / ms_pixel_ratio <= window_height; ++i)
     {
-        int height = (midi.notes[i].end - midi.notes[i].start) / ms_pixel_ratio + string_w(0) * 2;
-        int note_bottom = wtop() + string_w(0) +
+        int height = (midi.notes[i].end - midi.notes[i].start) / ms_pixel_ratio + 200 / ms_pixel_ratio;
+        int note_bottom = wtop() + 100 / ms_pixel_ratio +
                 (elapsed() - beat_to_ms(midi.notes[i].start)) / ms_pixel_ratio +
                 (window_height - btn_d() * 1.5 + string_w(0) / 2);
         int note_top = note_bottom - height;
-        if (note_bottom >= wbottom() - 100 && note_top <= wbottom() - 45)
+        if (note_bottom >= wbottom() - btn_d() * 1.5 && note_top <= wbottom() - btn_d() * 0.5)
             onKey = true;
         else
             onKey = false;
         pen.setColor(Qt::white);
         if (onKey)
         {
-            if (isPressing[midi.notes[i].key])
+            if (is_pressing[midi.notes[i].key])
             {
                 if (!midi.notes[i].pressed())
                 {
@@ -187,6 +188,9 @@ void Canvas::drawBars(QPainter *painter)
         painter->setPen(pen);
         painter->drawLine(string_positions[midi.notes[i].key], note_top,
                           string_positions[midi.notes[i].key], note_bottom);
+        double r = string_w(0) / 2;
+        painter->drawEllipse(string_positions[midi.notes[i].key] - r, note_bottom - r,
+                r * 2, r * 2);
         if (note_top > wbottom())
         {
             if (!midi.notes[current_note].pressed())
@@ -217,15 +221,16 @@ void Canvas::setPressing(int which, bool pressing)
 {
     if (which >= 1 && which <= 5)
     {
-        isPressing[which] = pressing;
+        is_pressing[which] = pressing;
     }
 }
 
 void Canvas::setMidi(Midi new_midi)
 {
     midi = new_midi;
-    ms_pixel_ratio = midi.bpm / 18.0;
+    ms_pixel_ratio = 7.0 - midi.bpm / 4.50;
     video_pre_ms = size().height() * ms_pixel_ratio;
+    printf("ms_pixel_ratio: %.2lf\n", ms_pixel_ratio);
 }
 
 int Canvas::elapsed() const
@@ -257,6 +262,11 @@ void Canvas::keyPressEvent(QKeyEvent *event)
        int key_no = event->key() - Qt::Key_1 + 1;
        setPressing(key_no, true);
    }
+   else if (event->key() == Qt::Key_Enter && !is_picking)
+   {
+       is_picking = true;
+       last_picking = elapsed();
+   }
 }
 
 void Canvas::keyReleaseEvent(QKeyEvent *event)
@@ -264,6 +274,10 @@ void Canvas::keyReleaseEvent(QKeyEvent *event)
    if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_5)
    {
        setPressing(event->key() - Qt::Key_1 + 1, false);
+   }
+   else if (event->key() == Qt::Key_Enter)
+   {
+       is_picking = false;
    }
 }
 

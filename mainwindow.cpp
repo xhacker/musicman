@@ -46,7 +46,7 @@ void MainWindow::on_playButton_clicked()
     canvas->resize(this->size());
     canvas->show();
 
-    QDir songdir(QDir::home().absoluteFilePath(".musicman/songs/Feelings/"));
+    QDir songdir(QDir::home().absoluteFilePath(".musicman/songs/Escape from Chaosland/"));
 
     music_guitar = new Phonon::MediaObject(this);
     music_guitar->setCurrentSource(Phonon::MediaSource(songdir.absoluteFilePath("guitar.mp3")));

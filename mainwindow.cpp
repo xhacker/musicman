@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
     sound_menu->play();
 
     musiclist = new QListWidget(this);
-    musiclist->resize(size());
     musiclist->show();
     musiclist->setVisible(false);
 }
@@ -133,8 +132,9 @@ void MainWindow::game_finished()
 {
     timer->stop();
     stop_music();
+    setFocus();
+    musiclist->setFocus();
     delete canvas;
-    show_buttons();
     sound_menu->play();
 }
 
@@ -175,4 +175,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             cur_scene = main;
         }
     }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    musiclist->resize(size());
 }

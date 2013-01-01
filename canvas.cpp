@@ -9,7 +9,7 @@ const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yel
 
 const int combo_max = 4;
 const int combo_inarow = 10;
-const int press_threshold = 200;
+const int press_threshold = 250;
 const int nopick_threshold = 250;
 const double guile_vol = 0.4;
 const int once_upon_a_time = -1314;
@@ -265,7 +265,7 @@ void Canvas::setPressing(int which, bool pressing)
 void Canvas::setMidi(Midi new_midi)
 {
     midi = new_midi;
-    ms_pixel_ratio = 7.0 - midi.bpm / 45.0;
+    ms_pixel_ratio = 8.0 - midi.bpm / 27.0;
     video_pre_ms = size().height() * ms_pixel_ratio;
     printf("ms_pixel_ratio: %.2lf\n", ms_pixel_ratio);
 }
@@ -333,7 +333,7 @@ void Canvas::keyReleaseEvent(QKeyEvent *event)
 
 void Canvas::drawEnd(QPainter *painter)
 {
-    if ((elapsed() - total_time) < 6000)
+    if ((elapsed() - total_time) < 4000)
     {
         drawText(painter, QColor(255, 0, 0, std::min(255, (elapsed() - total_time) / 5)),
                  QString("Score: %1").arg(score),

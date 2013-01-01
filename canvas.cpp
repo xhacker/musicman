@@ -1,6 +1,7 @@
 #include <QPainter>
 #include <QTimer>
 #include <QKeyEvent>
+#include <iostream>
 #include "mainwindow.h"
 #include "canvas.h"
 
@@ -83,11 +84,7 @@ void Canvas::paintEvent(QPaintEvent *event)
     }
     else
     {
-        // show score
-        // enter name
-        // show highscore
-        printf("Finished.\n");
-        finished = true;
+        drawEnd(&painter);
     }
 }
 
@@ -243,9 +240,8 @@ void Canvas::drawBars(QPainter *painter)
 
 void Canvas::drawCombos(QPainter *painter)
 {
-    char combo_text[40];
-    sprintf(combo_text, "Combo x %d", combo);
-    drawText(painter, QColor(255, 0, 0, 255 - ((elapsed() - combo_start) / 3)), combo_text,
+    drawText(painter, QColor(255, 0, 0, 255 - (elapsed() - combo_start) / 3),
+             QString("Combo x %1").arg(combo),
              50 + ((elapsed() - combo_start) / 3), "Gill Sans",
              wleft(), wtop(), window_width, window_height);
 }
@@ -329,13 +325,20 @@ void Canvas::keyReleaseEvent(QKeyEvent *event)
 
 void Canvas::drawEnd(QPainter *painter)
 {
-    char score_text[40];
-    sprintf(score_text, "Your Score: %d", score);
-    drawText(painter, QColor(0, 255, 0, 255), score_text, 50, "Gill Sans",
-             wleft(), wtop(), window_width, window_height);
+    if ((elapsed() - total_time) < 6000)
+    {
+        drawText(painter, QColor(255, 0, 0, std::min(255, (elapsed() - total_time) / 5)),
+                 QString("Score: %1").arg(score),
+                 std::min(120, 20 + (elapsed() - total_time) / 10), "Gill Sans",
+                 wleft(), wtop(), window_width, window_height);
+    }
+    else
+    {
+        finished = true;
+    }
 }
 
-void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char text[],
+void Canvas::drawText(QPainter*& painter, const QColor& word_color, const QString text,
                       const int& fontSize, const char fontName[],
                       const int& top_left_x, const int& top_left_y,
                       const int& width, const int& height)
@@ -349,13 +352,6 @@ void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char t
     painter->setBrush(brush);
     painter->setFont(font);
     painter->drawText(QRect(top_left_x, top_left_y, width, height), Qt::AlignCenter, text);
-}
-
-void Canvas::drawText(QPainter*& painter, const QColor& word_color, const char text[],
-                      const int& fontSize, const char fontName[],
-                      const int& top_left_x, const int& top_left_y)
-{
-    drawText(painter, word_color, QString(text), fontSize, fontName, top_left_x, top_left_y);
 }
 
 void Canvas::drawText(QPainter*& painter, const QColor& word_color, const QString text,

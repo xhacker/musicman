@@ -71,13 +71,13 @@ protected:
     void drawCombos(QPainter *painter);
     void drawEnd(QPainter *painter);
 
-    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
-                  const int& fontSize, const char fontName[], const int& top_left_x,
-                  const int& top_left_y, const int& width, const int& height);
-    void drawText(QPainter*& painter, const QColor& word_color, const char text[],
-                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
+    void drawText(QPainter*& painter, const QColor& word_color, QString text,
+                  const int& fontSize, const char fontName[],
+                  const int& top_left_x, const int& top_left_y,
+                  const int& width, const int& height);
     void drawText(QPainter*& painter, const QColor& word_color, const QString text,
-                  const int& fontSize, const char fontName[], const int& top_left_x, const int& top_left_y);
+                  const int& fontSize, const char fontName[],
+                  const int& top_left_x, const int& top_left_y);
 
     void setPressing(int, bool);
     void playGuileSound();

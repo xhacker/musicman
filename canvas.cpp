@@ -1,15 +1,15 @@
 #include <QPainter>
 #include <QTimer>
 #include <QKeyEvent>
-#include <mainwindow.h>
+#include "mainwindow.h"
 #include "canvas.h"
 
 const Qt::GlobalColor string_colors[6] = {Qt::black, Qt::green, Qt::red, Qt::yellow, Qt::blue, Qt::magenta};
 
 const int combo_max = 4;
 const int combo_inarow = 10;
-const int press_threshold = 300;
-const int nopick_threshold = 400;
+const int press_threshold = 200;
+const int nopick_threshold = 250;
 const double guile_vol = 0.4;
 const int once_upon_a_time = -1314;
 
@@ -202,7 +202,7 @@ void Canvas::drawBars(QPainter *painter)
         painter->drawLine(string_positions[key], note_top,
                           string_positions[key], note_bottom);
         double r = stringW(0) / 2;
-        painter->drawEllipse(string_positions[key] - r, note_bottom - r,
+        painter->drawEllipse(string_positions[key] - r, note_bottom,
                 r * 2, r * 2);
         if (elapsed() > start_ms + press_threshold)
         {

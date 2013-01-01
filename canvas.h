@@ -13,6 +13,7 @@ class Canvas : public QGLWidget
 public:
     Canvas(QWidget *parent = 0);
     void setMidi(Midi);
+    void setTotalTime(int t);
 
 public slots:
     void animate();
@@ -27,7 +28,8 @@ private:
     int last_picking;
     bool last_picking_with[6];
 
-    QTime starttime;
+    QTime start_time;
+    int total_time;
     int real_elapsed;
     int last_good;
 

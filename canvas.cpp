@@ -20,7 +20,7 @@ Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), paren
     inarow_count(0), is_good(true),
     showing_combo(false), current_note(0), midi("")
 {
-    starttime.start();
+    start_time.start();
     for (int i = 1; i <= 5; ++i)
     {
         is_pressing[i] = false;
@@ -49,6 +49,11 @@ int Canvas::wright() const
     return window_width / 2;
 }
 
+void Canvas::setTotalTime(int t)
+{
+    total_time = t;
+}
+
 void Canvas::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -57,21 +62,32 @@ void Canvas::paintEvent(QPaintEvent *event)
     resize(((MainWindow *)parent())->size());
     window_width = size().width();
     window_height = size().height();
+    painter.setWindow(wleft(), wtop(), window_width, window_height);
     int w = 30 + window_width / 20;
     for (int i = 1; i <= 5; ++i)
         string_positions[i] = (-3 + i) * w;
-    painter.setWindow(wleft(), wtop(), window_width, window_height);
-    drawScore(&painter);
-    drawDebug(&painter);
-    drawStrings(&painter);
-    if (midi.notes[current_note].end)
-        drawBars(&painter);
-    drawButtons(&painter);
 
-    if ((elapsed() - combo_start) >= 255 * 3)
-        showing_combo = false;
-    if (showing_combo)
-        drawCombos(&painter);
+    if (elapsed() <= total_time)
+    {
+        drawScore(&painter);
+        drawDebug(&painter);
+        drawStrings(&painter);
+        if (midi.notes[current_note].end)
+            drawBars(&painter);
+        drawButtons(&painter);
+
+        if ((elapsed() - combo_start) >= 255 * 3)
+            showing_combo = false;
+        if (showing_combo)
+            drawCombos(&painter);
+    }
+    else
+    {
+        // show score
+        // enter name
+        // show highscore
+        printf("Finished.\n");
+    }
 }
 
 void Canvas::drawScore(QPainter *painter)
@@ -256,7 +272,7 @@ int Canvas::elapsed() const
 
 void Canvas::animate()
 {
-    real_elapsed = starttime.elapsed();
+    real_elapsed = start_time.elapsed();
     repaint();
     if (elapsed() > 0)
         ((MainWindow *)parent())->play();

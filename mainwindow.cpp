@@ -64,6 +64,7 @@ void MainWindow::on_playButton_clicked()
     midi.parse();
     canvas->setMidi(midi);
 
+    canvas->setTotalTime(music_song->totalTime());
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), canvas, SLOT(animate()));
     timer->start(20);

@@ -21,6 +21,8 @@ public:
     void setGuitarMuted(bool);
 
 private slots:
+    void menu_sound_finished();
+
     void on_tutorialButton_clicked();
 
     void on_playButton_clicked();
@@ -36,6 +38,7 @@ private:
     Phonon::AudioOutput *music_guitar_output;
     Phonon::MediaObject *music_song;
     Phonon::AudioOutput *music_song_output;
+    Phonon::MediaObject *sound_menu;
 };
 
 #endif // MAINWINDOW_H

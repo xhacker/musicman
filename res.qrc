@@ -6,5 +6,7 @@
         <file alias="screwup4.mp3">res/sound/screwup/fiba4.mp3</file>
         <file alias="screwup5.mp3">res/sound/screwup/fiba5.mp3</file>
         <file alias="screwup6.mp3">res/sound/screwup/fiba6.mp3</file>
+        <file alias="menu.mp3">res/sound/menu.mp3</file>
+        <file alias="start.mp3">res/sound/start.mp3</file>
     </qresource>
 </RCC>

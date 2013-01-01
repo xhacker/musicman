@@ -14,6 +14,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->verticalLayout->setAlignment(Qt::AlignCenter);
+
+    sound_menu = new Phonon::MediaObject(this);
+    createPath(sound_menu, new Phonon::AudioOutput(Phonon::MusicCategory, this));
+    sound_menu->setCurrentSource(Phonon::MediaSource(":/sound/menu.mp3"));
+    QObject::connect(sound_menu, SIGNAL(aboutToFinish()), SLOT(menu_sound_finished()));
+    sound_menu->setTransitionTime(-270);
+    sound_menu->play();
+}
+
+void MainWindow::menu_sound_finished()
+{
+    sound_menu->enqueue(Phonon::MediaSource(":/sound/menu.mp3"));
 }
 
 MainWindow::~MainWindow()
@@ -45,6 +57,12 @@ void MainWindow::on_playButton_clicked()
     canvas = new Canvas(this);
     canvas->resize(this->size());
     canvas->show();
+
+    sound_menu->stop();
+    Phonon::MediaObject *sound_start = new Phonon::MediaObject(this);
+    createPath(sound_start, new Phonon::AudioOutput(Phonon::MusicCategory, this));
+    sound_start->setCurrentSource(Phonon::MediaSource(":/sound/start.mp3"));
+    sound_start->play();
 
     QDir songdir(QDir::home().absoluteFilePath(".musicman/songs/Escape from Chaosland/"));
 

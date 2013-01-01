@@ -15,11 +15,19 @@ const double guile_vol = 0.4;
 const int once_upon_a_time = -1314;
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-    is_picking(false), real_elapsed(0), finished(false),
-    last_picking(once_upon_a_time), last_good(once_upon_a_time),
-    score(0), combo(1), combo_start(0),
-    inarow_count(0), is_good(true),
-    showing_combo(false), current_note(0), midi("")
+    is_picking(false),
+    last_picking(once_upon_a_time),
+    real_elapsed(0),
+    last_good(once_upon_a_time),
+    finished(false),
+    current_note(0),
+    score(0),
+    is_good(true),
+    combo(1),
+    showing_combo(false),
+    combo_start(0),
+    inarow_count(0),
+    midi("")
 {
     start_time.start();
     for (int i = 1; i <= 5; ++i)

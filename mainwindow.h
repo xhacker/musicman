@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QWidget>
+#include <QListWidget>
 #include <Phonon>
 #include "canvas.h"
 
@@ -24,21 +25,31 @@ public:
 
 private slots:
     void menu_sound_finished();
-
     void redraw_canvas();
-
     void on_tutorialButton_clicked();
-
     void on_playButton_clicked();
-
     void on_quitButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
+    QListWidget *musiclist;
     Canvas *canvas;
+
     void hide_buttons();
     void show_buttons();
+    void start_game(QString music_name);
+
+    void keyPressEvent(QKeyEvent *e);
+
+    enum scene
+    {
+        main,
+        list,
+        tutorial,
+        game
+    };
+    scene cur_scene;
 
     Phonon::MediaObject *music_guitar;
     Phonon::AudioOutput *music_guitar_output;

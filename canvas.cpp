@@ -14,7 +14,7 @@ const double guile_vol = 0.4;
 const int once_upon_a_time = -1314;
 
 Canvas::Canvas(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-    is_picking(false), real_elapsed(0),
+    is_picking(false), real_elapsed(0), finished(false),
     last_picking(once_upon_a_time), last_good(once_upon_a_time),
     score(0), combo(1), combo_start(0),
     inarow_count(0), is_good(true),
@@ -87,6 +87,7 @@ void Canvas::paintEvent(QPaintEvent *event)
         // enter name
         // show highscore
         printf("Finished.\n");
+        finished = true;
     }
 }
 
@@ -270,12 +271,17 @@ int Canvas::elapsed() const
     return real_elapsed - video_pre_ms;
 }
 
+bool Canvas::isFinished() const
+{
+    return finished;
+}
+
 void Canvas::animate()
 {
     real_elapsed = start_time.elapsed();
     repaint();
     if (elapsed() > 0)
-        ((MainWindow *)parent())->play();
+        ((MainWindow *)parent())->play_music();
     if (isGood())
         ((MainWindow *)parent())->setGuitarMuted(false);
     else

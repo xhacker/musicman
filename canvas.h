@@ -14,6 +14,7 @@ public:
     Canvas(QWidget *parent = 0);
     void setMidi(Midi);
     void setTotalTime(int t);
+    bool isFinished() const;
 
 public slots:
     void animate();
@@ -32,6 +33,7 @@ private:
     int total_time;
     int real_elapsed;
     int last_good;
+    bool finished;
 
     double ms_pixel_ratio;
     int video_pre_ms;

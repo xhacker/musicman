@@ -17,11 +17,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void play();
+    void play_music();
+    void stop_music();
     void setGuitarMuted(bool);
+    void game_finished();
 
 private slots:
     void menu_sound_finished();
+
+    void redraw_canvas();
 
     void on_tutorialButton_clicked();
 
@@ -31,8 +35,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QTimer *timer;
     Canvas *canvas;
     void hide_buttons();
+    void show_buttons();
 
     Phonon::MediaObject *music_guitar;
     Phonon::AudioOutput *music_guitar_output;

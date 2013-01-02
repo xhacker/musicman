@@ -18,13 +18,17 @@ SOURCES += main.cpp\
     canvas.cpp \
     note.cpp \
     midi.cpp \
-    mainwindow.cpp
+    mainwindow.cpp\
+    HighScoreTable/MusicHighScore.cpp\
+    HighScoreTable/ReadWriteScore.cpp
 
 HEADERS  += \
     canvas.h \
     note.h \
     midi.h \
-    mainwindow.h
+    mainwindow.h\
+    HighScoreTable/MusicHighScore.h\
+    HighScoreTable/ReadWriteScore.h
 
 FORMS    += mainwindow.ui
 

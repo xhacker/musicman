@@ -31,7 +31,17 @@
      <number>0</number>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0">
+      <item>
+       <widget class="QLabel" name="scoreLabel">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="nameEdit"/>
+      </item>
       <item>
        <widget class="QPushButton" name="playButton">
         <property name="sizePolicy">

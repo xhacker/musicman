@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->verticalLayout->setAlignment(Qt::AlignCenter);
 
+    setStyleSheet(
+        QString("QPushButton {font-size: 40px; font-family: 'Avenir Next'; font-weight: bold;}"));
+
     timer = new QTimer(this);
 
     sound_menu = new Phonon::MediaObject(this);
@@ -30,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     musiclist = new QListWidget(this);
     musiclist->show();
     musiclist->setVisible(false);
+
+    ui->scoreLabel->setVisible(false);
+    ui->nameEdit->setVisible(false);
 }
 
 void MainWindow::menu_sound_finished()
@@ -79,10 +85,14 @@ void MainWindow::on_playButton_clicked()
     musiclist->addItems(dir_songs.entryList(QDir::Dirs | QDir::NoDotAndDotDot));
     if (musiclist->count() > 0)
         musiclist->setCurrentItem(musiclist->item(0));
+
+    musiclist->setStyleSheet(
+        QString("font-size: 40px; font-family: 'Avenir Next'; font-weight: bold;"));
 }
 
 void MainWindow::start_game(QString music_name)
 {
+    cur_scene = game;
     canvas = new Canvas(this);
     canvas->resize(this->size());
     canvas->show();
@@ -132,9 +142,30 @@ void MainWindow::game_finished()
 {
     timer->stop();
     stop_music();
-    setFocus();
-    musiclist->setFocus();
+
+    // score
+    cur_scene = score;
+    ui->scoreLabel->setText(QString("Score: %1").arg(canvas->getScore()));
+    ui->scoreLabel->setVisible(true);
+    ui->nameEdit->setPlaceholderText("Enter name");
+    ui->nameEdit->setVisible(true);
+
     delete canvas;
+    setFocus();
+    ui->nameEdit->setFocus();
+}
+
+void MainWindow::on_nameEdit_returnPressed()
+{
+    // highscore
+    cur_scene = highscore;
+    ui->scoreLabel->setVisible(false);
+    ui->nameEdit->setVisible(false);
+
+    // return to main
+    cur_scene = main;
+//    musiclist->setVisible(true);
+    show_buttons();
     sound_menu->play();
 }
 
@@ -163,6 +194,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         if (cur_scene == list)
         {
+            musiclist->setVisible(false);
             start_game(musiclist->currentItem()->text());
         }
     }

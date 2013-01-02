@@ -15,6 +15,7 @@ public:
     void setMidi(Midi);
     void setTotalTime(int t);
     bool isFinished() const;
+    int getScore() const;
 
 public slots:
     void animate();

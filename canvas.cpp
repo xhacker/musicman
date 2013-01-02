@@ -63,6 +63,11 @@ void Canvas::setTotalTime(int t)
     total_time = t;
 }
 
+int Canvas::getScore() const
+{
+    return score;
+}
+
 void Canvas::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -265,7 +270,7 @@ void Canvas::setPressing(int which, bool pressing)
 void Canvas::setMidi(Midi new_midi)
 {
     midi = new_midi;
-    ms_pixel_ratio = 8.0 - midi.bpm / 27.0;
+    ms_pixel_ratio = 9.0 - midi.bpm / 27.0;
     video_pre_ms = size().height() * ms_pixel_ratio;
     printf("ms_pixel_ratio: %.2lf\n", ms_pixel_ratio);
 }

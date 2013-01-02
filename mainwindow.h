@@ -30,6 +30,8 @@ private slots:
     void on_playButton_clicked();
     void on_quitButton_clicked();
 
+    void on_nameEdit_returnPressed();
+
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
@@ -48,7 +50,9 @@ private:
         main,
         list,
         tutorial,
-        game
+        game,
+        score,
+        highscore
     };
     scene cur_scene;
 

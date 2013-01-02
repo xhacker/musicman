@@ -1,7 +1,7 @@
+#include <iostream>
 #include <QPainter>
 #include <QTimer>
 #include <QKeyEvent>
-#include <iostream>
 #include "mainwindow.h"
 #include "canvas.h"
 
@@ -97,6 +97,7 @@ void Canvas::paintEvent(QPaintEvent *event)
     }
     else
     {
+        std::cout << "Elapsed: " << elapsed() << "; Total Time: " << total_time << std::endl;
         drawEnd(&painter);
     }
 }
@@ -174,7 +175,7 @@ void Canvas::drawButtons(QPainter *painter)
 
 int Canvas::beatToMs(int beats) const
 {
-    return (int)((double)beats / midi.bpm * 60 * 1000 / division);
+    return (int)((double)beats / midi.bpm * 60 * 1000 / midi.division);
 }
 
 void Canvas::drawBars(QPainter *painter)

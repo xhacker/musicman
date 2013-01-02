@@ -10,8 +10,10 @@ Midi::Midi(std::string address) : address(address)
 void Midi::parse()
 {
     FILE *fin = fopen(address.c_str(), "r");
-    fscanf(fin, "BPM=%d", &bpm);
+    fscanf(fin, "BPM=%d\n", &bpm);
+    fscanf(fin, "Division=%d", &division);
     printf("BPM: %d\n", bpm);
+    printf("Division: %d\n", division);
     int count = 0;
     while (true)
     {

@@ -93,9 +93,6 @@ void MainWindow::on_playButton_clicked()
 void MainWindow::start_game(QString music_name)
 {
     cur_scene = game;
-    canvas = new Canvas(this);
-    canvas->resize(this->size());
-    canvas->show();
 
     sound_menu->stop();
     Phonon::MediaObject *sound_start = new Phonon::MediaObject(this);
@@ -117,11 +114,14 @@ void MainWindow::start_game(QString music_name)
         new Phonon::AudioOutput(Phonon::MusicCategory, this);
     Phonon::createPath(music_song, music_song_output);
 
+    canvas = new Canvas(this);
     Midi midi(dir_music.absoluteFilePath("notes.musicman").toStdString());
     midi.parse();
     canvas->setMidi(midi);
-
     canvas->setTotalTime(music_song->totalTime());
+    canvas->resize(this->size());
+    canvas->show();
+
     connect(timer, SIGNAL(timeout()), SLOT(redraw_canvas()));
     timer->start(20);
 }

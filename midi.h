@@ -4,8 +4,6 @@
 #include <iostream>
 #include "note.h"
 
-const int division = 96;
-
 class Midi
 {
 public:
@@ -13,6 +11,7 @@ public:
     void parse();
     Note notes[1000];
     int bpm;
+    int division;
 private:
     std::string address;
 };

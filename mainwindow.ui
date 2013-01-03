@@ -34,13 +34,26 @@
      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0">
       <item>
        <widget class="QLabel" name="scoreLabel">
+        <property name="styleSheet">
+         <string notr="true">font-size: 40px;</string>
+        </property>
         <property name="text">
          <string>TextLabel</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="nameEdit"/>
+       <widget class="QLineEdit" name="nameEdit">
+        <property name="styleSheet">
+         <string notr="true">font-size: 40px;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>Enter name</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="playButton">

@@ -18,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->verticalLayout->setAlignment(Qt::AlignCenter);
 
-    setStyleSheet(
-        QString("QPushButton {font-size: 40px; font-family: 'Avenir Next'; font-weight: bold;}"));
+    setStyleSheet(QString("font-family: 'Avenir Next';"));
+    setStyleSheet(QString("QPushButton { font-size: 40px; font-weight: bold; }"));
 
     timer = new QTimer(this);
 
@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     musiclist = new QListWidget(this);
     musiclist->show();
     musiclist->setVisible(false);
+    musiclist->setStyleSheet(QString("font-size: 40px; font-weight: bold;"));
 
     ui->scoreLabel->setVisible(false);
     ui->nameEdit->setVisible(false);
@@ -85,9 +86,6 @@ void MainWindow::on_playButton_clicked()
     musiclist->addItems(dir_songs.entryList(QDir::Dirs | QDir::NoDotAndDotDot));
     if (musiclist->count() > 0)
         musiclist->setCurrentItem(musiclist->item(0));
-
-    musiclist->setStyleSheet(
-        QString("font-size: 40px; font-family: 'Avenir Next'; font-weight: bold;"));
 }
 
 void MainWindow::start_game(QString music_name)
@@ -147,7 +145,6 @@ void MainWindow::game_finished()
     cur_scene = score;
     ui->scoreLabel->setText(QString("Score: %1").arg(canvas->getScore()));
     ui->scoreLabel->setVisible(true);
-    ui->nameEdit->setPlaceholderText("Enter name");
     ui->nameEdit->setVisible(true);
 
     delete canvas;

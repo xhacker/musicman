@@ -18,8 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->verticalLayout->setAlignment(Qt::AlignCenter);
 
-    setStyleSheet(QString("font-family: 'Avenir Next';"));
-    setStyleSheet(QString("QPushButton { font-size: 40px; font-weight: bold; }"));
+    setStyleSheet(QString("QPushButton { font-family: 'Avenir Next'; font-size: 40px; font-weight: bold; }"));
 
     timer = new QTimer(this);
 
@@ -33,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     musiclist = new QListWidget(this);
     musiclist->show();
     musiclist->setVisible(false);
-    musiclist->setStyleSheet(QString("font-size: 40px; font-weight: bold;"));
+    musiclist->setStyleSheet(QString("font-family: 'Avenir Next'; font-size: 40px; font-weight: bold;"));
 
     ui->scoreLabel->setVisible(false);
     ui->nameEdit->setVisible(false);

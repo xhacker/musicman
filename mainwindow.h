@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QWidget>
 #include <QListWidget>
-#include <Phonon>
+#include <phonon>
 #include "canvas.h"
 
 namespace Ui {

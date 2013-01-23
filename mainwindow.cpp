@@ -4,7 +4,7 @@
 #include <QDir>
 #include <QString>
 #include <QListWidget>
-#include <Phonon>
+#include <phonon>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "canvas.h"
